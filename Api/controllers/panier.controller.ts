@@ -1,57 +1,129 @@
-import { Request, Response } from "express";
-import {PanierService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
+// import { sessionMiddleware, roleMiddleware } from "../middleware";
+// import { IEmployeeRole } from "../models";
 
+export class PanierController {
+    private static instance?: PanierController;
 
-export const createPanier = async (req: Request, res: Response) => {
-    try {
-        const panier = await PanierService.createPanier(req.body);
-        res.status(201).send(panier);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getPaniers = async (req: Request, res: Response) => {
-    try {
-        const paniers = await PanierService.getPaniers();
-        res.status(200).send(paniers);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getPanierById = async (req: Request, res: Response) => {
-    try {
-        const panier = await PanierService.getPanierById(req.params.id);
-        if (!panier) {
-            return res.status(404).send();
+    static getInstance(): PanierController {
+        if (!PanierController.instance) {
+            PanierController.instance = new PanierController();
         }
-        res.status(200).send(panier);
-    } catch (error) {
-        res.status(500).send(error);
+        return PanierController.instance;
     }
-};
 
-export const updatePanier = async (req: Request, res: Response) => {
-    try {
-        const panier = await PanierService.updatePanier(req.params.id, req.body);
-        if (!panier) {
-            return res.status(404).send();
+    async create(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.body || !req.body.items) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const panierService = mongooseService.panierService;
+            const panier = await panierService.createPanier(req.body.user, req.body.items);
+            res.status(201).json(panier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(panier);
-    } catch (error) {
-        res.status(400).send(error);
     }
-};
 
-export const deletePanier = async (req: Request, res: Response) => {
-    try {
-        const panier = await PanierService.deletePanier(req.params.id);
-        if (!panier) {
-            return res.status(404).send();
+    async getAll(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const panierService = mongooseService.panierService;
+            const paniers = await panierService.getPaniers();
+            res.status(200).json(paniers);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(panier);
-    } catch (error) {
-        res.status(500).send(error);
     }
-};
+
+    async getById(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const panierService = mongooseService.panierService;
+            const panier = await panierService.getPanierById(req.params.id);
+            if (!panier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(panier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const panierService = mongooseService.panierService;
+            const updatedPanier = await panierService.updatePanier(req.params.id, req.body);
+            if (!updatedPanier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(updatedPanier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const panierService = mongooseService.panierService;
+            const deletedPanier = await panierService.deletePanier(req.params.id);
+            if (!deletedPanier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/paniers", express.json(), this.getAll.bind(this));
+        router.get("/paniers/:id", express.json(), this.getById.bind(this));
+        router.post(
+            "/paniers",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.create.bind(this)
+        );
+        router.put(
+            "/paniers/:id",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.update.bind(this)
+        );
+        router.delete(
+            "/paniers/:id",
+            // sessionMiddleware(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.delete.bind(this)
+        );
+        return router;
+    }
+}

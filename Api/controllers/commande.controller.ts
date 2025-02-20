@@ -1,57 +1,109 @@
-import { Request, Response } from "express";
-import {CommandeService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
+// import { sessionMiddleware, roleMiddleware } from "../middleware";
+// import { IEmployeeRole } from "../models";
 
+export class CommandeController {
+    private static instance?: CommandeController;
 
-export const createCommande = async (req: Request, res: Response) => {
-    try {
-        const commande = await CommandeService.createCommande(req.body);
-        res.status(201).send(commande);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getCommandes = async (req: Request, res: Response) => {
-    try {
-        const commandes = await CommandeService.getCommandes();
-        res.status(200).send(commandes);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getCommandeById = async (req: Request, res: Response) => {
-    try {
-        const commande = await CommandeService.getCommandeById(req.params.id);
-        if (!commande) {
-            return res.status(404).send();
+    static getInstance(): CommandeController {
+        if (!CommandeController.instance) {
+            CommandeController.instance = new CommandeController();
         }
-        res.status(200).send(commande);
-    } catch (error) {
-        res.status(500).send(error);
+        return CommandeController.instance;
     }
-};
 
-export const updateCommande = async (req: Request, res: Response) => {
-    try {
-        const commande = await CommandeService.updateCommande(req.params.id, req.body);
-        if (!commande) {
-            return res.status(404).send();
+    async createCommande(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.body || !req.body.user || !req.body.items || !req.body.total) {
+            res.status(400).end();
+            return;
         }
-        res.status(200).send(commande);
-    } catch (error) {
-        res.status(400).send(error);
+        
+        const mongooseService = await MongooseService.getInstance();
+        const commandeService = mongooseService.commandeService;
+        const commande = await commandeService.createCommande(req.body.user, req.body.items, req.body.total);
+        res.status(201).json(commande);
     }
-};
 
-export const deleteCommande = async (req: Request, res: Response) => {
-    try {
-        const commande = await CommandeService.deleteCommande(req.params.id);
-        if (!commande) {
-            return res.status(404).send();
-        }
-        res.status(200).send(commande);
-    } catch (error) {
-        res.status(500).send(error);
+    async getCommandes(req: express.Request, res: express.Response): Promise<void> {
+        const mongooseService = await MongooseService.getInstance();
+        const commandeService = mongooseService.commandeService;
+        const commandes = await commandeService.getCommandes();
+        res.json(commandes);
     }
-};
+
+    async getCommandeById(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const commandeService = mongooseService.commandeService;
+        const commande = await commandeService.getCommandeById(req.params.id);
+        if (!commande) {
+            res.status(404).end();
+            return;
+        }
+        res.json(commande);
+    }
+
+    async updateCommande(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id || !req.body) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const commandeService = mongooseService.commandeService;
+        const updatedCommande = await commandeService.updateCommande(req.params.id, req.body);
+        if (!updatedCommande) {
+            res.status(404).end();
+            return;
+        }
+        res.json(updatedCommande);
+    }
+
+    async deleteCommande(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const commandeService = mongooseService.commandeService;
+        const deletedCommande = await commandeService.deleteCommande(req.params.id);
+        if (!deletedCommande) {
+            res.status(404).end();
+            return;
+        }
+        res.status(204).end();
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/commandes", express.json(), this.getCommandes.bind(this));
+        router.get("/commandes/:id", express.json(), this.getCommandeById.bind(this));
+        router.post(
+            "/commandes",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.createCommande.bind(this)
+        );
+        router.put(
+            "/commandes/:id",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.updateCommande.bind(this)
+        );
+        router.delete(
+            "/commandes/:id",
+            // sessionMiddleware(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.deleteCommande.bind(this)
+        );
+        return router;
+    }
+}

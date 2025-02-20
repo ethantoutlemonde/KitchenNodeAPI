@@ -1,56 +1,109 @@
-import { Request, Response } from "express";
-import {AdresseService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
+// import { sessionMiddleware, roleMiddleware } from "../middleware";
+// import { IEmployeeRole } from "../models";
 
-export const createAdresse = async (req: Request, res: Response) => {
-    try {
-        const adresse = await AdresseService.createAdresse(req.body);
-        res.status(201).send(adresse);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
+export class AdresseController {
+    private static instance?: AdresseController;
 
-export const getAdresses = async (req: Request, res: Response) => {
-    try {
-        const adresses = await AdresseService.getAdresses();
-        res.status(200).send(adresses);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getAdresseById = async (req: Request, res: Response) => {
-    try {
-        const adresse = await AdresseService.getAdresseById(req.params.id);
-        if (!adresse) {
-            return res.status(404).send();
+    static getInstance(): AdresseController {
+        if (!AdresseController.instance) {
+            AdresseController.instance = new AdresseController();
         }
-        res.status(200).send(adresse);
-    } catch (error) {
-        res.status(500).send(error);
+        return AdresseController.instance;
     }
-};
 
-export const updateAdresse = async (req: Request, res: Response) => {
-    try {
-        const adresse = await AdresseService.updateAdresse(req.params.id, req.body);
-        if (!adresse) {
-            return res.status(404).send();
+    async createAdresse(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.body) {
+            res.status(400).end();
+            return;
         }
-        res.status(200).send(adresse);
-    } catch (error) {
-        res.status(400).send(error);
+        
+        const mongooseService = await MongooseService.getInstance();
+        const adresseService = mongooseService.adresseService;
+        const adresse = await adresseService.createAdresse(req.body.user, req.body.street, req.body.city, req.body.postalCode, req.body.country);
+        res.status(201).json(adresse);
     }
-};
 
-export const deleteAdresse = async (req: Request, res: Response) => {
-    try {
-        const adresse = await AdresseService.deleteAdresse(req.params.id);
-        if (!adresse) {
-            return res.status(404).send();
-        }
-        res.status(200).send(adresse);
-    } catch (error) {
-        res.status(500).send(error);
+    async getAdresses(req: express.Request, res: express.Response): Promise<void> {
+        const mongooseService = await MongooseService.getInstance();
+        const adresseService = mongooseService.adresseService;
+        const adresses = await adresseService.getAdresses();
+        res.json(adresses);
     }
-};
+
+    async getAdresseById(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const adresseService = mongooseService.adresseService;
+        const adresse = await adresseService.getAdresseById(req.params.id);
+        if (!adresse) {
+            res.status(404).end();
+            return;
+        }
+        res.json(adresse);
+    }
+
+    async updateAdresse(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id || !req.body) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const adresseService = mongooseService.adresseService;
+        const updatedAdresse = await adresseService.updateAdresse(req.params.id, req.body);
+        if (!updatedAdresse) {
+            res.status(404).end();
+            return;
+        }
+        res.json(updatedAdresse);
+    }
+
+    async deleteAdresse(req: express.Request, res: express.Response): Promise<void> {
+        if (!req.params.id) {
+            res.status(400).end();
+            return;
+        }
+        
+        const mongooseService = await MongooseService.getInstance();
+        const adresseService = mongooseService.adresseService;
+        const deletedAdresse = await adresseService.deleteAdresse(req.params.id);
+        if (!deletedAdresse) {
+            res.status(404).end();
+            return;
+        }
+        res.status(204).end();
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/adresses", express.json(), this.getAdresses.bind(this));
+        router.get("/adresses/:id", express.json(), this.getAdresseById.bind(this));
+        router.post(
+            "/adresses",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.createAdresse.bind(this)
+        );
+        router.put(
+            "/adresses/:id",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.updateAdresse.bind(this)
+        );
+        router.delete(
+            "/adresses/:id",
+            // sessionMiddleware(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.deleteAdresse.bind(this)
+        );
+        return router;
+    }
+}

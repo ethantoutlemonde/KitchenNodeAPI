@@ -1,57 +1,110 @@
-import { Request, Response } from "express";
-import {PromopanierService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
 
+export class PromopanierController {
+    private static instance?: PromopanierController;
 
-export const createPromopanier = async (req: Request, res: Response) => {
-    try {
-        const promopanier = await PromopanierService.createPromopanier(req.body);
-        res.status(201).send(promopanier);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getPromopaniers = async (req: Request, res: Response) => {
-    try {
-        const promopaniers = await PromopanierService.getPromopaniers();
-        res.status(200).send(promopaniers);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getPromopanierById = async (req: Request, res: Response) => {
-    try {
-        const promopanier = await PromopanierService.getPromopanierById(req.params.id);
-        if (!promopanier) {
-            return res.status(404).send();
+    static getInstance(): PromopanierController {
+        if (!PromopanierController.instance) {
+            PromopanierController.instance = new PromopanierController();
         }
-        res.status(200).send(promopanier);
-    } catch (error) {
-        res.status(500).send(error);
+        return PromopanierController.instance;
     }
-};
 
-export const updatePromopanier = async (req: Request, res: Response) => {
-    try {
-        const promopanier = await PromopanierService.updatePromopanier(req.params.id, req.body);
-        if (!promopanier) {
-            return res.status(404).send();
+    async create(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.body || !req.body.promopanier) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const promopanierService = mongooseService.promoPanierService;
+            const promopanier = await promopanierService.createPromoPanier( req.body.promopanier, req.body.promotion);
+            res.status(201).json(promopanier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(promopanier);
-    } catch (error) {
-        res.status(400).send(error);
     }
-};
 
-export const deletePromopanier = async (req: Request, res: Response) => {
-    try {
-        const promopanier = await PromopanierService.deletePromopanier(req.params.id);
-        if (!promopanier) {
-            return res.status(404).send();
+    async getAll(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const promopanierService = mongooseService.promoPanierService;
+            const promopaniers = await promopanierService.getPromoPaniers();
+            res.status(200).json(promopaniers);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(promopanier);
-    } catch (error) {
-        res.status(500).send(error);
     }
-};
+
+    async getById(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const promopanierService = mongooseService.promoPanierService;
+            const promopanier = await promopanierService.getPromoPanierById(req.params.id);
+            if (!promopanier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(promopanier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const promopanierService = mongooseService.promoPanierService;
+            const updatedPromopanier = await promopanierService.updatePromoPanier(req.params.id, req.body);
+            if (!updatedPromopanier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(updatedPromopanier);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const promopanierService = mongooseService.promoPanierService;
+            const deletedPromopanier = await promopanierService.deletePromoPanier(req.params.id);
+            if (!deletedPromopanier) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/promopaniers", express.json(), this.getAll.bind(this));
+        router.get("/promopaniers/:id", express.json(), this.getById.bind(this));
+        router.post("/promopaniers", express.json(), this.create.bind(this));
+        router.put("/promopaniers/:id", express.json(), this.update.bind(this));
+        router.delete("/promopaniers/:id", this.delete.bind(this));
+        return router;
+    }
+}

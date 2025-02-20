@@ -1,57 +1,129 @@
-import { Request, Response } from "express";
-import {MenuService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
+// import { sessionMiddleware, roleMiddleware } from "../middleware";
+// import { IEmployeeRole } from "../models";
 
+export class MenuController {
+    private static instance?: MenuController;
 
-export const createMenu = async (req: Request, res: Response) => {
-    try {
-        const menu = await MenuService.createMenu(req.body);
-        res.status(201).send(menu);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getMenus = async (req: Request, res: Response) => {
-    try {
-        const menus = await MenuService.getMenus();
-        res.status(200).send(menus);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getMenuById = async (req: Request, res: Response) => {
-    try {
-        const menu = await MenuService.getMenuById(req.params.id);
-        if (!menu) {
-            return res.status(404).send();
+    static getInstance(): MenuController {
+        if (!MenuController.instance) {
+            MenuController.instance = new MenuController();
         }
-        res.status(200).send(menu);
-    } catch (error) {
-        res.status(500).send(error);
+        return MenuController.instance;
     }
-};
 
-export const updateMenu = async (req: Request, res: Response) => {
-    try {
-        const menu = await MenuService.updateMenu(req.params.id, req.body);
-        if (!menu) {
-            return res.status(404).send();
+    async create(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.body || !req.body.name || !req.body.items) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const menuService = mongooseService.menuService;
+            const menu = await menuService.createMenu(req.body.name, req.body.items);
+            res.status(201).json(menu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(menu);
-    } catch (error) {
-        res.status(400).send(error);
     }
-};
 
-export const deleteMenu = async (req: Request, res: Response) => {
-    try {
-        const menu = await MenuService.deleteMenu(req.params.id);
-        if (!menu) {
-            return res.status(404).send();
+    async getAll(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const menuService = mongooseService.menuService;
+            const menus = await menuService.getMenus();
+            res.status(200).json(menus);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(menu);
-    } catch (error) {
-        res.status(500).send(error);
     }
-};
+
+    async getById(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const menuService = mongooseService.menuService;
+            const menu = await menuService.getMenuById(req.params.id);
+            if (!menu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(menu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const menuService = mongooseService.menuService;
+            const updatedMenu = await menuService.updateMenu(req.params.id, req.body);
+            if (!updatedMenu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(updatedMenu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+            
+            const mongooseService = await MongooseService.getInstance();
+            const menuService = mongooseService.menuService;
+            const deletedMenu = await menuService.deleteMenu(req.params.id);
+            if (!deletedMenu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/menus", express.json(), this.getAll.bind(this));
+        router.get("/menus/:id", express.json(), this.getById.bind(this));
+        router.post(
+            "/menus",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.create.bind(this)
+        );
+        router.put(
+            "/menus/:id",
+            // sessionMiddleware(),
+            express.json(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.update.bind(this)
+        );
+        router.delete(
+            "/menus/:id",
+            // sessionMiddleware(),
+            // roleMiddleware(IEmployeeRole.ADMIN),
+            this.delete.bind(this)
+        );
+        return router;
+    }
+}

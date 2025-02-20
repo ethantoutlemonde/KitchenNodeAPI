@@ -1,57 +1,121 @@
-import { Request, Response } from "express";
-import {PromotionService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
 
+export class PromotionController {
+    private static instance?: PromotionController;
 
-export const createPromotion = async (req: Request, res: Response) => {
-    try {
-        const promotion = await PromotionService.createPromotion(req.body);
-        res.status(201).send(promotion);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getPromotions = async (req: Request, res: Response) => {
-    try {
-        const promotions = await PromotionService.getPromotions();
-        res.status(200).send(promotions);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getPromotionById = async (req: Request, res: Response) => {
-    try {
-        const promotion = await PromotionService.getPromotionById(req.params.id);
-        if (!promotion) {
-            return res.status(404).send();
+    static getInstance(): PromotionController {
+        if (!PromotionController.instance) {
+            PromotionController.instance = new PromotionController();
         }
-        res.status(200).send(promotion);
-    } catch (error) {
-        res.status(500).send(error);
+        return PromotionController.instance;
     }
-};
 
-export const updatePromotion = async (req: Request, res: Response) => {
-    try {
-        const promotion = await PromotionService.updatePromotion(req.params.id, req.body);
-        if (!promotion) {
-            return res.status(404).send();
-        }
-        res.status(200).send(promotion);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
+    async create(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const { nom, description, pourcentage } = req.body;
 
-export const deletePromotion = async (req: Request, res: Response) => {
-    try {
-        const promotion = await PromotionService.deletePromotion(req.params.id);
-        if (!promotion) {
-            return res.status(404).send();
+            // Vérifier que tous les champs sont fournis
+            if (!nom || !description || pourcentage === undefined) {
+            res.status(400).json({ error: "Missing required fields: nom, description, pourcentage" });
+            return;
         }
-        res.status(200).send(promotion);
-    } catch (error) {
-        res.status(500).send(error);
+
+            const mongooseService = await MongooseService.getInstance();
+            const promotionService = mongooseService.promotionService;
+            const promotion = await promotionService.createPromotion(req.body.nom, req.body.description, req.body.pourcentage);
+
+            res.status(201).json(promotion);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
     }
-};
+
+    async getAll(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const promotionService = mongooseService.promotionService;
+            const promotions = await promotionService.getPromotions();
+
+            res.status(200).json(promotions);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async getById(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const promotionService = mongooseService.promotionService;
+            const promotion = await promotionService.getPromotionById(req.params.id);
+
+            if (!promotion) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(200).json(promotion);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const promotionService = mongooseService.promotionService;
+            const updatedPromotion = await promotionService.updatePromotion(req.params.id, req.body);
+
+            if (!updatedPromotion) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(200).json(updatedPromotion);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const promotionService = mongooseService.promotionService;
+            const deletedPromotion = await promotionService.deletePromotion(req.params.id);
+
+            if (!deletedPromotion) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/promotions", express.json(), this.getAll.bind(this));
+        router.get("/promotions/:id", express.json(), this.getById.bind(this));
+        router.post("/promotions", express.json(), this.create.bind(this));
+        router.put("/promotions/:id", express.json(), this.update.bind(this));
+        router.delete("/promotions/:id", this.delete.bind(this));
+        return router;
+    }
+}

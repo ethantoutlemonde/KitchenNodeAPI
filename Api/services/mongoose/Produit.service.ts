@@ -1,13 +1,13 @@
 import { Model } from "mongoose";
 import { IProduit } from "../../models";
-import { produitSchema } from "./schema";
+import { ProduitSchema } from "./schema";
 import mongoose from "mongoose";
 
 export class ProduitService {
     private model: Model<IProduit>;
 
     constructor() {
-        this.model = mongoose.model<IProduit>("Produit", produitSchema);
+        this.model = mongoose.model<IProduit>("Produit", ProduitSchema);
     }
 
     // Créer un produit

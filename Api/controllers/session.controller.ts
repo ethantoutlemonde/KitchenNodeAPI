@@ -1,57 +1,121 @@
-import { Request, Response } from "express";
-import {SessionService} from "../services";
+import express from "express";
+import { MongooseService } from "../services";
 
+export class SessionController {
+    private static instance?: SessionController;
 
-export const createSession = async (req: Request, res: Response) => {
-    try {
-        const session = await SessionService.createSession(req.body);
-        res.status(201).send(session);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getSessions = async (req: Request, res: Response) => {
-    try {
-        const sessions = await SessionService.getSessions();
-        res.status(200).send(sessions);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getSessionById = async (req: Request, res: Response) => {
-    try {
-        const session = await SessionService.getSessionById(req.params.id);
-        if (!session) {
-            return res.status(404).send();
+    static getInstance(): SessionController {
+        if (!SessionController.instance) {
+            SessionController.instance = new SessionController();
         }
-        res.status(200).send(session);
-    } catch (error) {
-        res.status(500).send(error);
+        return SessionController.instance;
     }
-};
 
-export const updateSession = async (req: Request, res: Response) => {
-    try {
-        const session = await SessionService.updateSession(req.params.id, req.body);
-        if (!session) {
-            return res.status(404).send();
-        }
-        res.status(200).send(session);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
+    async create(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const { nom, utilisateur, dateDebut, dateFin } = req.body;
 
-export const deleteSession = async (req: Request, res: Response) => {
-    try {
-        const session = await SessionService.deleteSession(req.params.id);
-        if (!session) {
-            return res.status(404).send();
+            // Vérifier que tous les champs sont fournis
+            if (!nom || !utilisateur || !dateDebut || !dateFin) {
+                res.status(400).json({ error: "Missing required fields: nom, utilisateur, dateDebut, dateFin" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const sessionService = mongooseService.sessionService;
+            const session = await sessionService.createSession(nom, utilisateur);
+
+            res.status(201).json(session);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(session);
-    } catch (error) {
-        res.status(500).send(error);
     }
-};
+
+    async getAll(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const sessionService = mongooseService.sessionService;
+            const sessions = await sessionService.getSessions();
+
+            res.status(200).json(sessions);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async getById(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const sessionService = mongooseService.sessionService;
+            const session = await sessionService.getSessionById(req.params.id);
+
+            if (!session) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(200).json(session);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const sessionService = mongooseService.sessionService;
+            const updatedSession = await sessionService.updateSession(req.params.id, req.body);
+
+            if (!updatedSession) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(200).json(updatedSession);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const sessionService = mongooseService.sessionService;
+            const deletedSession = await sessionService.deleteSession(req.params.id);
+
+            if (!deletedSession) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/sessions", express.json(), this.getAll.bind(this));
+        router.get("/sessions/:id", express.json(), this.getById.bind(this));
+        router.post("/sessions", express.json(), this.create.bind(this));
+        router.put("/sessions/:id", express.json(), this.update.bind(this));
+        router.delete("/sessions/:id", this.delete.bind(this));
+        return router;
+    }
+}

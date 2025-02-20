@@ -1,57 +1,110 @@
-import { Request, Response } from "express";
-import {PromomenuService} from "../services";
+import express, { Request, Response } from "express";
+import { MongooseService } from "../services";
 
+export class PanierMenuController {
+    private static instance?: PanierMenuController;
 
-export const createPromomenu = async (req: Request, res: Response) => {
-    try {
-        const promomenu = await PromomenuService.createPromomenu(req.body);
-        res.status(201).send(promomenu);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
-
-export const getPromomenus = async (req: Request, res: Response) => {
-    try {
-        const promomenus = await PromomenuService.getPromomenus();
-        res.status(200).send(promomenus);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-export const getPromomenuById = async (req: Request, res: Response) => {
-    try {
-        const promomenu = await PromomenuService.getPromomenuById(req.params.id);
-        if (!promomenu) {
-            return res.status(404).send();
+    static getInstance(): PanierMenuController {
+        if (!PanierMenuController.instance) {
+            PanierMenuController.instance = new PanierMenuController();
         }
-        res.status(200).send(promomenu);
-    } catch (error) {
-        res.status(500).send(error);
+        return PanierMenuController.instance;
     }
-};
 
-export const updatePromomenu = async (req: Request, res: Response) => {
-    try {
-        const promomenu = await PromomenuService.updatePromomenu(req.params.id, req.body);
-        if (!promomenu) {
-            return res.status(404).send();
-        }
-        res.status(200).send(promomenu);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-};
+    async create(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.body || !req.body.panier || !req.body.menu) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
 
-export const deletePromomenu = async (req: Request, res: Response) => {
-    try {
-        const promomenu = await PromomenuService.deletePromomenu(req.params.id);
-        if (!promomenu) {
-            return res.status(404).send();
+            const mongooseService = await MongooseService.getInstance();
+            const panierMenuService = mongooseService.panierMenuService;
+            const panierMenu = await panierMenuService.createPanierMenu(req.body.panier, req.body.menu);
+            res.status(201).json(panierMenu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
         }
-        res.status(200).send(promomenu);
-    } catch (error) {
-        res.status(500).send(error);
     }
-};
+
+    async getAll(req: Request, res: Response): Promise<void> {
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const panierMenuService = mongooseService.panierMenuService;
+            const panierMenus = await panierMenuService.getPanierMenus();
+            res.status(200).json(panierMenus);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async getById(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const panierMenuService = mongooseService.panierMenuService;
+            const panierMenu = await panierMenuService.getPanierMenuById(req.params.id);
+            if (!panierMenu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(panierMenu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async update(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.params.id || !req.body) {
+                res.status(400).json({ error: "Missing required fields" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const panierMenuService = mongooseService.panierMenuService;
+            const updatedPanierMenu = await panierMenuService.updatePanierMenu(req.params.id, req.body);
+            if (!updatedPanierMenu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(200).json(updatedPanierMenu);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async delete(req: Request, res: Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+
+            const mongooseService = await MongooseService.getInstance();
+            const panierMenuService = mongooseService.panierMenuService;
+            const deletedPanierMenu = await panierMenuService.deletePanierMenu(req.params.id);
+            if (!deletedPanierMenu) {
+                res.status(404).json({ error: "Not found" });
+                return;
+            }
+            res.status(204).end();
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    buildRouter(): express.Router {
+        const router = express.Router();
+        router.get("/paniermenus", this.getAll.bind(this));
+        router.get("/paniermenus/:id", this.getById.bind(this));
+        router.post("/paniermenus", this.create.bind(this));
+        router.put("/paniermenus/:id", this.update.bind(this));
+        router.delete("/paniermenus/:id", this.delete.bind(this));
+        return router;
+    }
+}
