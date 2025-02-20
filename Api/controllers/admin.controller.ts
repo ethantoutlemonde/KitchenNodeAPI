@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as AdminService from "../services/admin.service";
+import {AdminService} from "../services";
 
 export const createAdmin = async (req: Request, res: Response) => {
     try {

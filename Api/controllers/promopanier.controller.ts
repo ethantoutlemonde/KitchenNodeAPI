@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as PromopanierService from "../services/promopanier.service";
+import {PromopanierService} from "../services";
+
 
 export const createPromopanier = async (req: Request, res: Response) => {
     try {

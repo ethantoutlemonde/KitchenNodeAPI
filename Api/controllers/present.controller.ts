@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as PresentService from "../services/present.service";
+import {PresentService} from "../services";
+
 
 export const createPresent = async (req: Request, res: Response) => {
     try {

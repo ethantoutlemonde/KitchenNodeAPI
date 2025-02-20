@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as PaniermenuService from "../services/paniermenu.service";
+import {PaniermenuService} from "../services";
+
 
 export const createPaniermenu = async (req: Request, res: Response) => {
     try {

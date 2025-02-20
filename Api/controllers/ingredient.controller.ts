@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as IngredientService from "../services/ingredient.service";
+import {IngredientService} from "../services";
+
 
 export const createIngredient = async (req: Request, res: Response) => {
     try {

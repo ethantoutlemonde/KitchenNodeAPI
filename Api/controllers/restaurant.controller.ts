@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as RestaurantService from "../services/restaurant.service";
+import {RestaurantService} from "../services";
+
 
 export const createRestaurant = async (req: Request, res: Response) => {
     try {

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as AdresseService from "../services/adresse.service";
+import {AdresseService} from "../services";
 
 export const createAdresse = async (req: Request, res: Response) => {
     try {

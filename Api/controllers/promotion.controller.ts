@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as PromotionService from "../services/promotion.service";
+import {PromotionService} from "../services";
+
 
 export const createPromotion = async (req: Request, res: Response) => {
     try {

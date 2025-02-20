@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as PromomenuService from "../services/promomenu.service";
+import {PromomenuService} from "../services";
+
 
 export const createPromomenu = async (req: Request, res: Response) => {
     try {

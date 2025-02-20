@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as CommandeService from "../services/commande.service";
+import {CommandeService} from "../services";
+
 
 export const createCommande = async (req: Request, res: Response) => {
     try {

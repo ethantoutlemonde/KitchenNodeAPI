@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as ContientService from "../services/contient.service";
+import {ContientService} from "../services";
+
 
 export const createContient = async (req: Request, res: Response) => {
     try {

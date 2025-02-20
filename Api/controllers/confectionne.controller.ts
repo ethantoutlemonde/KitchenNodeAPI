@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import * as ConfectionneService from "../services/confectionne.service";
+import {ConfectionneService} from "../services";
+
 
 export const createConfectionne = async (req: Request, res: Response) => {
     try {
