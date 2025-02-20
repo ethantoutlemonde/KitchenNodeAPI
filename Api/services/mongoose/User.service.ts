@@ -1,36 +1,57 @@
-import { Schema } from "mongoose";
-import { IUser } from "../../../models";
+import { Request, Response } from "express";
+import { User } from "../models/userModel";
 
-export const userSchema = new Schema<IUser>({
-    Mail: {
-        type: String
-    },
-    Password: {
-        type: String
-    },
-    Nom: {
-        type: String,
-        required: true
-    },
-    Prenom: {
-        type: String,
-        required: true
-    },
-    Tel: {
-        type: String
-    },
-    Role: {
-        type: String,
-        enum: ['Bigboss', 'Admin', 'Customer', 'Preparateur', 'Livreur'],
-        required: true
-    },
-    Adresse: {
-        type: Schema.Types.ObjectId,
-        ref: 'Adresse',
-        required: true
+export const createUser = async (req: Request, res: Response) => {
+    try {
+        const user = new User(req.body);
+        await user.save();
+        res.status(201).send(user);
+    } catch (error) {
+        res.status(400).send(error);
     }
-}, {
-    timestamps: true,
-    collection: 'users',
-    versionKey: false
-});
+};
+
+export const getUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find().populate('Adresse');
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+export const getUserById = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById(req.params.id).populate('Adresse');
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};

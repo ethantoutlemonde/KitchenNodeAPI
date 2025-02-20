@@ -1,31 +1,57 @@
-import { Schema } from "mongoose";
-import { IPromotion } from "../../../models";
+import { Request, Response } from "express";
+import { Promotion } from "../models/promotionModel";
 
-export const promotionSchema = new Schema<IPromotion>({
-    Nom: {
-        type: String,
-        required: true
-    },
-    Description: {
-        type: String,
-        required: true
-    },
-    OffrePourcent: {
-        type: Number
-    },
-    OffrePrix: {
-        type: Number
-    },
-    Debut: {
-        type: Date,
-        required: true
-    },
-    Fin: {
-        type: Date,
-        required: true
+export const createPromotion = async (req: Request, res: Response) => {
+    try {
+        const promotion = new Promotion(req.body);
+        await promotion.save();
+        res.status(201).send(promotion);
+    } catch (error) {
+        res.status(400).send(error);
     }
-}, {
-    timestamps: true,
-    collection: 'promotions',
-    versionKey: false
-});
+};
+
+export const getPromotions = async (req: Request, res: Response) => {
+    try {
+        const promotions = await Promotion.find();
+        res.status(200).send(promotions);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+export const getPromotionById = async (req: Request, res: Response) => {
+    try {
+        const promotion = await Promotion.findById(req.params.id);
+        if (!promotion) {
+            return res.status(404).send();
+        }
+        res.status(200).send(promotion);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+export const updatePromotion = async (req: Request, res: Response) => {
+    try {
+        const promotion = await Promotion.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!promotion) {
+            return res.status(404).send();
+        }
+        res.status(200).send(promotion);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+};
+
+export const deletePromotion = async (req: Request, res: Response) => {
+    try {
+        const promotion = await Promotion.findByIdAndDelete(req.params.id);
+        if (!promotion) {
+            return res.status(404).send();
+        }
+        res.status(200).send(promotion);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
