@@ -1,65 +1,56 @@
-import express from "express";
-import {roleMiddleware, sessionMiddleware} from "../middlewares";
-import {IUserRole} from "../models";
-import {MongooseService} from "../services";
+import { Request, Response } from "express";
+import * as UserService from "../services/user.service";
 
-export class UserController {
+export const createUser = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.createUser(req.body);
+        res.status(201).send(user);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+};
 
-    private static instance?: UserController;
+export const getUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await UserService.getUsers();
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
 
-    static getInstance(): UserController {
-        if (!UserController.instance) {
-            UserController.instance = new UserController();
+export const getUserById = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.getUserById(req.params.id);
+        if (!user) {
+            return res.status(404).send();
         }
-        return UserController.instance;
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
     }
+};
 
-    private async createUser(role: IUserRole, req: express.Request, res: express.Response) {
-        if(!req.body
-            || typeof req.body.zoo !== 'string'
-            || typeof req.body.lastName !== 'string'
-            || typeof req.body.firstName !== 'string'
-            || typeof req.body.login !== 'string'
-            || typeof req.body.password !== 'string'
-            || typeof req.body.email !== 'string'
-        ) {
-            res.status(400).end();
-            return;
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.updateUser(req.params.id, req.body);
+        if (!user) {
+            return res.status(404).send();
         }
-        const mongooseService = await MongooseService.getInstance();
-        const userService = mongooseService.userService;
-        const user = await userService.createUser({
-            zoo: req.body.zoo,
-            login: req.body.login,
-            password: req.body.password,
-            lastName: req.body.lastName,
-            firstName: req.body.firstName,
-            email: req.body.email,
-            role: role
-        });
-        res.json(user);
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(400).send(error);
     }
+};
 
-    async createAdmin(req: express.Request, res: express.Response) {
-        return this.createUser(IUserRole.Admin, req, res);
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.deleteUser(req.params.id);
+        if (!user) {
+            return res.status(404).send();
+        }
+        res.status(200).send(user);
+    } catch (error) {
+        res.status(500).send(error);
     }
-
-    async createEmployee(req: express.Request, res: express.Response) {
-        return this.createUser(IUserRole.Employee, req, res);
-    }
-
-    buildRouter(): express.Router {
-        const router = express.Router();
-        router.post("/admin",
-            sessionMiddleware(),
-            roleMiddleware(IUserRole.SuperAdmin),
-            express.json(),
-            this.createAdmin.bind(this));
-        router.post("/employee",
-            sessionMiddleware(),
-            roleMiddleware(IUserRole.Admin),
-            express.json(),
-            this.createEmployee.bind(this));
-        return router;
-    }
-}
+};
