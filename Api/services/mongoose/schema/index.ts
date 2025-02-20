@@ -1,4 +1,3 @@
-export * from './user.schema';
-export * from './zoo.schema';
-export * from './session.schema';
-export * from './space.schema';
+export * from './AdresseSchema';
+export * from './CommandeSchema';
+export * from './IngredientSchema';
