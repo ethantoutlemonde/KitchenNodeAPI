@@ -1,17 +1,43 @@
-import {ICommandeSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { ICommande } from "../../../models";
 
-export const CommandeSchema = new Schema({
-    numero: { type: Number, required: true },
-    status: { type: String, enum: ['Paye', 'en cours de preparation', 'en cours de livraison', 'livre'], required: true },
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
-    adresse: { type: Schema.Types.ObjectId, ref: 'Adresse', required: true },
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    preparateur: { type: Schema.Types.ObjectId, ref: 'User' },
-    panier: { type: Schema.Types.ObjectId, ref: 'Panier', required: true }
-  }, {
+export const commandeSchema = new Schema<ICommande>({
+    Numero: {
+        type: Number,
+        required: true
+    },
+    Status: {
+        type: String,
+        enum: ['Paye', 'en cours de preparation', 'en cours de livaison', 'livre'],
+        required: true
+    },
+    Latitude: {
+        type: Number,
+        required: true
+    },
+    Longitude: {
+        type: Number,
+        required: true
+    },
+    Adresse: {
+        type: Schema.Types.ObjectId,
+        ref: 'Adresse',
+        required: true
+    },
+    User: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        unique: true
+    },
+    Panier: {
+        type: Schema.Types.ObjectId,
+        ref: 'Panier',
+        required: true,
+        unique: true
+    }
+}, {
     timestamps: true,
     collection: 'commandes',
-    versionKey: false,
-  });
+    versionKey: false
+});

@@ -1,10 +1,15 @@
-import {IPanierSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { IPanier } from "../../../models";
 
-export const PanierSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'User', unique: true }
-  }, {
+export const panierSchema = new Schema<IPanier>({
+    User: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        unique: true
+    }
+}, {
     timestamps: true,
     collection: 'paniers',
-    versionKey: false,
-  });
+    versionKey: false
+});

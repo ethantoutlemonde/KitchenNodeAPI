@@ -1,16 +1,36 @@
-import {IUserSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { IUser } from "../../../models";
 
-export const UserSchema = new Schema({
-    mail: String,
-    password: String,
-    nom: { type: String, required: true },
-    prenom: { type: String, required: true },
-    tel: String,
-    role: { type: String, enum: ['Bigboss', 'Admin', 'Customer', 'Preparateur', 'Livreur'], required: true },
-    adresse: { type: Schema.Types.ObjectId, ref: 'Adresse', required: true }
-  }, {
+export const userSchema = new Schema<IUser>({
+    Mail: {
+        type: String
+    },
+    Password: {
+        type: String
+    },
+    Nom: {
+        type: String,
+        required: true
+    },
+    Prenom: {
+        type: String,
+        required: true
+    },
+    Tel: {
+        type: String
+    },
+    Role: {
+        type: String,
+        enum: ['Bigboss', 'Admin', 'Customer', 'Preparateur', 'Livreur'],
+        required: true
+    },
+    Adresse: {
+        type: Schema.Types.ObjectId,
+        ref: 'Adresse',
+        required: true
+    }
+}, {
     timestamps: true,
     collection: 'users',
-    versionKey: false,
-  });
+    versionKey: false
+});

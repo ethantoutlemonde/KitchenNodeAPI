@@ -1,15 +1,31 @@
-import {IPromotionSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { IPromotion } from "../../../models";
 
-export const PromotionSchema = new Schema({
-    nom: { type: String, required: true },
-    description: { type: String, required: true },
-    offrePourcent: Number,
-    offrePrix: Number,
-    debut: { type: Date, required: true },
-    fin: { type: Date, required: true }
-  }, {
+export const promotionSchema = new Schema<IPromotion>({
+    Nom: {
+        type: String,
+        required: true
+    },
+    Description: {
+        type: String,
+        required: true
+    },
+    OffrePourcent: {
+        type: Number
+    },
+    OffrePrix: {
+        type: Number
+    },
+    Debut: {
+        type: Date,
+        required: true
+    },
+    Fin: {
+        type: Date,
+        required: true
+    }
+}, {
     timestamps: true,
     collection: 'promotions',
-    versionKey: false,
-  });
+    versionKey: false
+});

@@ -1,15 +1,33 @@
-import {IMenuSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { IMenu } from "../../../models";
 
-export const MenuSchema = new Schema({
-    nom: { type: String, required: true },
-    description: { type: String, required: true },
-    prix: { type: Number, required: true },
-    image: { type: String, required: true },
-    disponible: { type: Boolean, required: true },
-    produits: [{ type: Schema.Types.ObjectId, ref: 'Produit' }]
-  }, {
+export const menuSchema = new Schema<IMenu>({
+    Nom: {
+        type: String,
+        required: true
+    },
+    Description: {
+        type: String,
+        required: true
+    },
+    Prix: {
+        type: Number,
+        required: true
+    },
+    Disponible: {
+        type: Boolean,
+        required: true
+    },
+    Image: {
+        type: String,
+        required: true
+    },
+    Produits: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Produit'
+    }]
+}, {
     timestamps: true,
     collection: 'menus',
-    versionKey: false,
-  });
+    versionKey: false
+});

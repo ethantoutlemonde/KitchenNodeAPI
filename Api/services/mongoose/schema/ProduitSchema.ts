@@ -1,14 +1,29 @@
-import {IProduitSchema} from "../../../models";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
+import { IProduit } from "../../../models";
 
-export const ProduitSchema = new Schema({
-    nom: { type: String, required: true },
-    description: { type: String, required: true },
-    prix: { type: Number, required: true },
-    image: { type: String, required: true },
-    disponible: { type: Boolean, required: true }
-  }, {
+export const produitSchema = new Schema<IProduit>({
+    Nom: {
+        type: String,
+        required: true
+    },
+    Description: {
+        type: String,
+        required: true
+    },
+    Prix: {
+        type: Number,
+        required: true
+    },
+    Image: {
+        type: String,
+        required: true
+    },
+    Disponible: {
+        type: Boolean,
+        required: true
+    }
+}, {
     timestamps: true,
     collection: 'produits',
-    versionKey: false,
-  });
+    versionKey: false
+});
