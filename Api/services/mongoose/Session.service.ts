@@ -1,8 +1,8 @@
 import { Model } from "mongoose";
 import { ISession } from "../../models/session.interface";
-import SessionSchema from "../mongoose/schema/SessionSchema"; // 🔥 Correction de l'import
+import SessionSchema from "../mongoose/schema/SessionSchema"; // 
 import mongoose from "mongoose";
-import crypto from "crypto"; // 🔥 Pour générer un Token aléatoire
+import crypto from "crypto"; //
 
 export class SessionService {
     private model: Model<ISession>;
@@ -12,7 +12,7 @@ export class SessionService {
     }
 
     async createSession(data: { user: any }): Promise<ISession> {
-        const token = crypto.randomBytes(32).toString("hex"); // 🔥 Génère un Token aléatoire
+        const token = crypto.randomBytes(32).toString("hex"); // 
         const session = new this.model({ Token: token, user: data.user });
         return await session.save();
     }

@@ -35,9 +35,9 @@ export class AuthController {
     
             const session = await sessionService.createSession({ user: validUser._id });
     
-            console.log("Session créée :", session); // 🔥 Debug pour voir si Token existe
+            console.log("Session créée :", session); // Debug pour voir si Token existe
     
-            return res.json({ sessionId: session.Token }); // ✅ Vérifie que Token existe
+            return res.json({ sessionId: session.Token }); // Vérifie que Token existe
         } catch (error) {
             console.error("Erreur lors de la connexion:", error);
             return res.status(500).json({ error: "Erreur interne du serveur" });

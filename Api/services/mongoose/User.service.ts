@@ -40,7 +40,7 @@ export class UserService {
             return await user.save();
         } catch (error) {
             console.error("Erreur lors de la création de l'utilisateur:", error);
-            return null; // ✅ Empêche l'API de crasher
+            return null; //  Empêche l'API de crasher
         }
     }
     
@@ -53,7 +53,7 @@ export class UserService {
             Nom: nom,
             Prenom: prenom,
             Mail: mail,
-            Password: hashedPassword, // ✅ Correction ici aussi !
+            Password: hashedPassword, // Correction ici aussi !
             Salt: salt,
             Tel: tel,
             Role: role
@@ -68,7 +68,7 @@ export class UserService {
     async findValidUser(mail: string, motDePasse: string): Promise<IUser | null> {
         try {
             const user = await this.model.findOne({ Mail: mail }).exec();
-            if (!user || !user.Salt) return null;  // ✅ Vérification améliorée
+            if (!user || !user.Salt) return null;  // Vérification améliorée
     
             const hashedInputPassword = this.hashPassword(motDePasse, user.Salt);
             if (hashedInputPassword !== user.Password) return null;
@@ -76,7 +76,7 @@ export class UserService {
             return user;
         } catch (error) {
             console.error("Erreur lors de la recherche de l'utilisateur:", error);
-            return null; // ✅ Évite de crasher l'API en cas d'erreur MongoDB
+            return null; // Évite de crasher l'API en cas d'erreur MongoDB
         }
     }
     
