@@ -1,0 +1,527 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WW2 - Fast Food Ordering System</title>
+  <!-- Ajouter ceci dans le <head> pour lier le CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+<body>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
+  </style>
+     
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <nav>
+    <div class="logo">
+      <img id="logo" src="https://180grammi-burgers-beers.com/wp-content/uploads/2021/01/180grammi-burger-illustration.png" alt="Waste Segregation Logo">
+    </div>
+    <ul>
+      <li><a href="https://codepen.io/Oreons_/full/abPgvmb" class="menu-item">Home</a></li>
+      <li><a href="https://codepen.io/Oreons_/full/abPgvmb" class="menu-item">Menu</a></li>
+  </nav>
+
+  <div class="maincontent">
+    <div class="menucontent">
+      <div class="menu-header">
+        <div class="menu-title">Burger Haven Menu</div>
+        <i>
+          <div id="currentDate"></div>
+        </i>
+        <div class="foodcategories">
+          <div id="burgers">
+            <div class="category-name line-selected">Burgers</div>
+          </div>
+          <div id="fries">
+            <div class="category-name line-selected">Fries</div>
+          </div>
+          <div id="beverages">
+            <div class="category-name line-selected">Beverages</div>
+          </div>
+        </div>
+        <div class="line-borderholder">
+          <div class="line-border"></div>
+          <div class="line-selected"></div>
+        </div>
+        <div class="choosedishes">Choose Dishes/Drinks:</div>
+      </div>
+
+      <div class="burger-itemwindow">
+        <div id="burger-items">
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item1">
+              <div class="burgernumbering">
+                <svg class="burgeritem-numberbg1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                  <circle cx="10" cy="10" r="10" />
+                  <div class="burgeritem-number1">1</div>
+                </svg>
+
+              </div>
+
+              <div class="burger-item1-content">
+                <img class="cheeseburgerimg" src="https://i.ibb.co/hVJg6xQ/burger-cheeseburger.png" alt="burger-cheeseburger" border="0">
+
+                <div class="cheeseburger-details">
+                  <div id="cheeseburger-name"></div>
+                  <div id="cheeseburger-price"></div>
+                  <div id="cheeseburger-desc"></div>
+                  <div id="cheeseburger-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item2">
+              <svg class="burgeritem-numberbg2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="burgeritem-number2">2</div>
+              </svg>
+
+              <div class="burger-item2-content">
+                <img class="mushroom-burgerimg" src="https://i.ibb.co/h9Sz6X5/burger-mushroom.png" alt="burger-mushroom" border="0">
+
+                <div class="mushroom-details">
+                  <div id="mushroom-name"></div>
+                  <div id="mushroom-price"></div>
+                  <div id="mushroom-desc"></div>
+                  <div id="mushroom-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item3">
+              <svg class="burgeritem-numberbg3" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+
+                <div class="burgeritem-number3">3</div>
+              </svg>
+
+              <div class="burger-item3-content">
+                <img class="bbqbacon-burgerimg" src="https://i.ibb.co/cT6hYv9/burger-bbq-bacon.png" alt="burger-bbq-bacon" border="0">
+
+                <div class="bbqbacon-details">
+                  <div id="bbqbacon-name"></div>
+                  <div id="bbqbacon-price"></div>
+                  <div id="bbqbacon-desc"></div>
+                  <div id="bbqbacon-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item4">
+              <svg class="burgeritem-numberbg4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="burgeritem-number4">4</div>
+              </svg>
+
+              <div class="burger-item4-content">
+                <img class="jalapeno-burgerimg" src="https://i.ibb.co/Kw8sXMR/burger-jalapeno.png" alt="burger-jalapeno" border="0">
+
+                <div class="jalapeno-details">
+                  <div id="jalapeno-name"></div>
+                  <div id="jalapeno-price"></div>
+                  <div id="jalapeno-desc"></div>
+                  <div id="jalapeno-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item5">
+              <svg class="burgeritem-numberbg5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="burgeritem-number5">5</div>
+              </svg>
+
+              <div class="burger-item5-content">
+                <img class="angus-burgerimg" src="https://i.ibb.co/FV7LFL3/burger-angus.png" alt="burger-angus" border="0">
+
+                <div class="angus-details">
+                  <div id="angus-name"></div>
+                  <div id="angus-price"></div>
+                  <div id="angus-desc"></div>
+                  <div id="angus-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="burger-item6">
+              <svg class="burgeritem-numberbg6" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="burgeritem-number6">6</div>
+              </svg>
+
+              <div class="burger-item6-content">
+                <div>
+                  <img class="teriyaki-burgerimg" src="https://i.ibb.co/rvRghBm/burger-teriyaki.png" alt="burger-teriyaki" border="0">
+                </div>
+
+                <div class="teriyaki-details">
+                  <div id="teriyaki-name"></div>
+                  <div id="teriyaki-price"></div>
+                  <div id="teriyaki-desc"></div>
+                  <div id="teriyaki-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fries-itemwindow">
+        <div id="fries-items">
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="fries-item1">
+              <div class="friesnumbering">
+                <svg class="friesitem-numberbg1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                  <circle cx="10" cy="10" r="10" />
+                  <div class="friesitem-number1">7</div>
+                </svg>
+              </div>
+
+              <div class="fries-item1-content">
+                <img class="classic-friesimg" src="https://i.ibb.co/dW5ST21/classic-fries-Photo-Room-png-Photo-Room.png" alt="fries-classic" border="0">
+
+                <div class="classic-fries-details">
+                  <div id="classic-fries-name"></div>
+                  <div id="classic-fries-price"></div>
+                  <div id="classic-fries-desc"></div>
+                  <div id="classic-fries-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="fries-item2">
+              <svg class="friesitem-numberbg2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="friesitem-number2">8</div>
+              </svg>
+
+              <div class="fries-item2-content">
+                <img class="curly-friesimg" src="https://i.ibb.co/v1W9yLZ/curly-fries-Photo-Room-png-Photo-Room.png" alt="fries-curly" border="0">
+
+                <div class="curly-fries-details">
+                  <div id="curly-fries-name"></div>
+                  <div id="curly-fries-price"></div>
+                  <div id="curly-fries-desc"></div>
+                  <div id="curly-fries-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="fries-item3">
+              <svg class="friesitem-numberbg3" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="friesitem-number3">9</div>
+              </svg>
+
+              <div class="fries-item3-content">
+                <img class="poutine-friesimg" src="https://i.ibb.co/Ch3nn5P/loaded-or-poutine-fries-removebg-preview.png" alt="fries-poutine" border="0">
+
+                <div class="poutine-fries-details">
+                  <div id="poutine-fries-name"></div>
+                  <div id="poutine-fries-price"></div>
+                  <div id="poutine-fries-desc"></div>
+                  <div id="poutine-fries-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="fries-item4">
+              <svg class="friesitem-numberbg4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="friesitem-number4">10</div>
+              </svg>
+
+              <div class="fries-item4-content">
+                <img class="sweet-potato-friesimg" src="https://i.ibb.co/PW0jQCH/sweet-potato-fries-Photo-Room-png-Photo-Room.png" alt="fries-sweet-potato" border="0">
+
+                <div class="sweet-potato-fries-details">
+                  <div id="sweet-potato-fries-name"></div>
+                  <div id="sweet-potato-fries-price"></div>
+                  <div id="sweet-potato-fries-desc"></div>
+                  <div id="sweet-potato-fries-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="beverage-itemwindow">
+        <div id="beverages-items">
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item1">
+              <div class="beveragenumbering">
+                <svg class="beverageitem-numberbg1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                  <circle cx="10" cy="10" r="10" />
+                  <div class="beverageitem-number1">11</div>
+                </svg>
+              </div>
+
+              <div class="beverage-item1-content">
+                <img class="coca-colaimg" src="https://i.ibb.co/NNKvFqW/cocacola.png" alt="coca-cola" border="0">
+
+                <div class="coca-cola-details">
+                  <div id="coca-cola-name"></div>
+                  <div id="coca-cola-price"></div>
+                  <div id="coca-cola-desc"></div>
+                  <div id="coca-cola-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item2">
+              <svg class="beverageitem-numberbg2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="beverageitem-number2">12</div>
+              </svg>
+
+              <div class="beverage-item2-content">
+                <img class="spriteimg" src="https://i.ibb.co/WWjkS5p/sprite.png" alt="sprite" border="0">
+
+                <div class="sprite-details">
+                  <div id="sprite-name"></div>
+                  <div id="sprite-price"></div>
+                  <div id="sprite-desc"></div>
+                  <div id="sprite-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item3">
+              <svg class="beverageitem-numberbg3" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="beverageitem-number3">13</div>
+              </svg>
+
+              <div class="beverage-item3-content">
+                <img class="royalimg" src="https://i.ibb.co/QFVQ8q7/royal.png" alt="royal" border="0">
+
+                <div class="royal-details">
+                  <div id="royal-name"></div>
+                  <div id="royal-price"></div>
+                  <div id="royal-desc"></div>
+                  <div id="royal-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item4">
+              <svg class="beverageitem-numberbg4" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="beverageitem-number4">14</div>
+              </svg>
+
+              <div class="beverage-item4-content">
+                <img class="iced-teaimg" src="https://i.ibb.co/4VRd3WH/iced-tea.png" alt="iced-tea" border="0">
+
+                <div class="iced-tea-details">
+                  <div id="iced-tea-name"></div>
+                  <div id="iced-tea-price"></div>
+                  <div id="iced-tea-desc"></div>
+                  <div id="iced-tea-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item5">
+              <svg class="beverageitem-numberbg5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="beverageitem-number5">15</div>
+              </svg>
+
+              <div class="beverage-item5-content">
+                <img class="lemon-juiceimg" src="https://i.ibb.co/N2SwZsy/lemonjuice.png" alt="lemon-juice" border="0">
+
+                <div class="lemon-juice-details">
+                  <div id="lemon-juice-name"></div>
+                  <div id="lemon-juice-price"></div>
+                  <div id="lemon-juice-desc"></div>
+                  <div id="lemon-juice-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animate__animated animate__fadeInUp animate__delay">
+            <div class="beverage-item6">
+              <svg class="beverageitem-numberbg6" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <circle cx="10" cy="10" r="10" />
+                <div class="beverageitem-number6">16</div>
+              </svg>
+
+              <div class="beverage-item6-content">
+                <img class="fruit-smoothieimg" src="https://i.ibb.co/k8bnG6N/fruitsmoothie.png" alt="fruit-smoothie" border="0">
+
+                <div class="fruit-smoothie-details">
+                  <div id="fruit-smoothie-name"></div>
+                  <div id="fruit-smoothie-price"></div>
+                  <div id="fruit-smoothie-desc"></div>
+                  <div id="fruit-smoothie-stocks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="orderingsyscontent">
+      <div class="startorder-wrapper">
+        <div class="animate__animated animate__fadeInDown animate__delay">
+          <div class="startordertext">Ready to start your order?</div>
+        </div>
+        <div class="startorderbutton-wrapper">
+          <div id="startorderbutton">Start Order +</div>
+        </div>
+      </div>
+      <div class="orderingsysheader">
+        <!-- order details -->
+        <div class="orderqueuenumber"></div>
+        <div id="ordertime"></div>
+
+        <!-- order mode -->
+        <div class="ordermodeholder">
+          <div class="ordermodetitle">Order Mode</div>
+          <div class="ordermodebuttons">
+            <div id="dine-in">Dine-In</div>
+            <div id="take-out">Take-Out</div>
+            <div id="delivery">Delivery</div>
+          </div>
+        </div>
+
+        <!-- item and quantity prompt -->
+        <div class="orderprompters">
+          <div class="orderpromptholder">
+            <div class="itemprompt">
+              <div class="itemprompttitle">Item Number</div>
+              <input id="itemprompter" type="text" placeholder="Type item number (1-16)...">
+            </div>
+            <div class="itemqtyprompt">
+              <div class="itemqtyprompttitle">Quantity</div>
+              <input id="itemqtyprompter" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Type item quantity (max. 20)...">
+            </div>
+          </div>
+          <div class="animate__animated animate__fadeInDown animate__delay">
+            <i>
+              <div class="errorempty">Error: Please complete the highlighted fields.</div>
+            </i>
+          </div>
+          <div class="animate__animated animate__fadeInDown animate__delay">
+            <i>
+              <div class="errorinvaliditemnumber">Error: Invalid item number. Please choose between item numbers 1-16.</div>
+            </i>
+          </div>
+          <div class="animate__animated animate__fadeInDown animate__delay">
+            <i>
+              <div class="errorinvaliditemqty">Error: Invalid quantity. Must not be less than 1 or more than 20.</div>
+            </i>
+          </div>
+        </div>
+
+        <!-- order list categories -->
+        <div class="orderlistcategories">
+          <div class="itemcategorytitle">Item</div>
+          <div class="qtycategorytitle">Qty</div>
+          <div class="pricecategorytitle">Price</div>
+        </div>
+      </div>
+
+      <!-- order items -->
+      <div class="orderingsysbody">
+        <div class="orderslistwrapper">
+          <div class="orderslist">
+            <div class="item">
+              <div class="item-firstcolumn">
+                <!-- item details -->
+                <div class="item-detailsplaceholder">
+                  <img class="item-image" src="" alt="">
+                  <div class="item-details">
+                    <div class="item-name"></div>
+                    <div class="item-price"></div>
+                  </div>
+                </div>
+
+                <!-- item quantity and subtotal -->
+                <input class="item-qty" type="number" min="1" max="20" oninput="validateQuantity(this)">
+
+                <div class="item-qtypricesubtotal"></div>
+              </div>
+
+              <div class="item-secondcolumn">
+                <!-- item notes and delete button -->
+                <input class="item-notes" type="text" placeholder="Item notes...">
+                <div class="delete-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ordersysfooter-wrapper">
+        <div class="ordersysfooter">
+          <div class="footerfirstcol">
+            <div class="costsubtotal-title">Sub-total</div>
+            <div class="costsubtotal-calc"></div>
+          </div>
+
+          <div class="footersecondcol">
+            <div class="vattax-title">VAT (12%)</div>
+            <div class="vattax-calc"></div>
+          </div>
+
+          <div class="footerthirdcol">
+            <div class="calc-line"></div>
+          </div>
+
+          <div class="footerfourthcol">
+            <div class="costtotal-title">Total</div>
+            <div class="costtotal-calc"></div>
+          </div>
+
+          <div class="footerfifthcol">
+            <div class="submitorderbutton" onclick="submitOrder()">Submit Order</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ajouter ceci juste avant </body> pour lier le JS -->
+  <script src="/assets/js/script.js"></script>
+  
+</body>
+
+</html>

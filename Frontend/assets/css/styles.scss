@@ -1,0 +1,1267 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    background: #1c1c1c;
+    font-family: "Bricolage Grotesque", sans-serif;
+    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Navigation Bar of the Website */
+  #logo {
+    width: 180px;
+    margin-left: 40px;
+    color: white;
+  }
+  
+  nav {
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #963831;
+    height: 70px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 5000;
+  }
+  
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 40px;
+    width: 100%;
+  }
+  
+  li {
+    display: inline;
+    margin-left: 50px;
+  
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  
+  li a {
+    text-decoration: none;
+    font-size: 22.5px;
+    color: white;
+    opacity: 0.3;
+    transition: opacity 400ms ease;
+    position: relative;
+    display: inline-block;
+  
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #da918b;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+  
+    &:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+  }
+  
+  li:hover a {
+    opacity: 1;
+  }
+  
+  ul:not(:hover) li a {
+    opacity: 1;
+  }
+  
+  /* Body of the Website */
+  
+  .maincontent {
+    width: 99.85%;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  /* Menu Header */
+  .menu-header {
+    position: relative;
+    background-color: #1c1c1c;
+    margin-top: 50px;
+    width: 65%;
+    height: 210px;
+    color: white;
+  }
+  
+  .menu-header::after {
+    content: "";
+    position: absolute;
+    bottom: -28px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to top, transparent, #1c1c1c);
+    filter: blur(1.5px);
+    z-index: 2;
+  }
+  
+  .menu-title {
+    font-size: 32px;
+    font-weight: 600;
+    padding-left: 25px;
+    padding-top: 15.5px;
+  }
+  
+  #currentDate {
+    position: relative;
+    color: grey;
+    margin-top: 1px;
+    padding-left: 25px;
+  }
+  
+  .line-borderholder {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 7.5px;
+  }
+  
+  .line-border {
+    width: 94%;
+    height: 2px;
+    background-color: #ffffff;
+    text-align: center;
+  }
+  
+  .foodcategories {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    margin-left: 25px;
+    margin-top: 17px;
+    width: 100%;
+    gap: 60px;
+    text-decoration: none;
+    font-size: 20.5px;
+    font-weight: 500;
+    color: white;
+    position: relative;
+  }
+  
+  .foodcategories div {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .line-selectedholder {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .line-selected::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 0;
+    height: 4px;
+    background-color: #c4635c;
+    transform: translateX(-50%);
+    transition: width 0.3s ease, left 0.3s ease;
+    z-index: 3;
+  }
+  
+  .foodcategories div.clicked .line-selected::after {
+    width: 100%;
+  }
+  
+  .foodcategories div:hover {
+    color: #c4635c;
+    cursor: pointer;
+  }
+  
+  .foodcategories div.clicked {
+    color: #c4635c;
+    cursor: pointer;
+  }
+  
+  .choosedishes {
+    position: relative;
+    display: flex;
+    color: white;
+    font-weight: 500;
+    font-size: 25px;
+    padding-left: 25px;
+    margin-top: 35px;
+  }
+  
+  /* Menu Items */
+  .burger-itemwindow {
+    width: 62.5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    max-height: 53vh;
+  }
+  
+  .fries-itemwindow {
+    width: 62.5%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    max-height: 53vh;
+  }
+  
+  .beverage-itemwindow {
+    width: 62.5%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    max-height: 53vh;
+  }
+  
+  // menu-items scrollbar design
+  ::-webkit-scrollbar {
+    width: 17px;
+    padding: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 8px;
+    border: 6px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+  }
+  
+  ::-webkit-scrollbar-track {
+    padding: 10px;
+    padding-right: 100px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    border: 6px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+  }
+  
+  // Burger Menu Main Structuring
+  
+  #burger-items {
+    max-width: 80%;
+    height: 100%;
+    position: relative;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 2fr));
+    margin-top: 650px;
+    margin-bottom: 30px;
+    padding-left: 30px;
+    gap: 87.5px 65px;
+  }
+  
+  #fries-items {
+    max-width: 80%;
+    height: 100%;
+    position: relative;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 4fr));
+    margin-top: 745px;
+    margin-bottom: 30px;
+    padding-left: 30px;
+    gap: 87.5px 65px;
+  }
+  
+  #beverages-items {
+    max-width: 80%;
+    height: 100%;
+    position: relative;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 2fr));
+    margin-top: 720px;
+    margin-bottom: 30px;
+    padding-left: 30px;
+    gap: 87.5px 65px;
+  }
+  
+  .burger-item1,
+  .burger-item2,
+  .burger-item3,
+  .burger-item4,
+  .burger-item5,
+  .burger-item6,
+  .fries-item1,
+  .fries-item2,
+  .fries-item3,
+  .fries-item4,
+  .beverage-item1,
+  .beverage-item2,
+  .beverage-item3,
+  .beverage-item4,
+  .beverage-item5,
+  .beverage-item6 {
+    width: 90%;
+    margin-left: -30px;
+    --animate-delay: 0.5s;
+  }
+  
+  .burgeritem-numberbg1,
+  .burgeritem-numberbg2,
+  .burgeritem-numberbg3,
+  .burgeritem-numberbg4,
+  .burgeritem-numberbg5,
+  .burgeritem-numberbg6,
+  .friesitem-numberbg1,
+  .friesitem-numberbg2,
+  .friesitem-numberbg3,
+  .friesitem-numberbg4,
+  .beverageitem-numberbg1,
+  .beverageitem-numberbg2,
+  .beverageitem-numberbg3,
+  .beverageitem-numberbg4,
+  .beverageitem-numberbg5,
+  .beverageitem-numberbg6 {
+    width: 2em;
+    height: 2em;
+    margin-left: -18.5px;
+    margin-top: -19px;
+    border: 2px solid white;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .burgeritem-number1 {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    max-width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: -15.5px;
+    margin-left: -4px;
+  }
+  
+  .friesitem-number1 {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    max-width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: -15.5px;
+    margin-left: -6px;
+  }
+  
+  .friesitem-number4,
+  .beverageitem-number2,
+  .beverageitem-number3,
+  .beverageitem-number4,
+  .beverageitem-number5,
+  .beverageitem-number6 {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    max-width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-top: -15.5px;
+    margin-left: -12px;
+  }
+  
+  .burgeritem-number2,
+  .burgeritem-number3,
+  .burgeritem-number4,
+  .burgeritem-number5,
+  .burgeritem-number6,
+  .friesitem-number2,
+  .friesitem-number3,
+  .beverageitem-number1 {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    max-width: 100%;
+    text-align: center;
+    margin-top: -15.5px;
+    margin-left: -8px;
+  }
+  
+  .burger-item1-content,
+  .burger-item2-content,
+  .burger-item3-content,
+  .burger-item4-content,
+  .burger-item5-content,
+  .burger-item6-content {
+    border-radius: 10px;
+    background-color: #121212;
+    width: 95%;
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 345px;
+  }
+  
+  .fries-item1-content,
+  .fries-item2-content,
+  .fries-item3-content,
+  .fries-item4-content,
+  .beverage-item1-content,
+  .beverage-item2-content,
+  .beverage-item3-content,
+  .beverage-item4-content,
+  .beverage-item5-content,
+  .beverage-item6-content {
+    border-radius: 10px;
+    background-color: #121212;
+    width: 95%;
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 365px;
+  }
+  
+  // Burgers, Fries, Beverages Images
+  
+  .cheeseburgerimg,
+  .mushroom-burgerimg,
+  .angus-burgerimg,
+  .teriyaki-burgerimg {
+    width: 85%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -60px;
+  }
+  
+  .bbqbacon-burgerimg {
+    width: 102.5%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -60px;
+  }
+  
+  .poutine-friesimg {
+    width: 150%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -40px;
+    margin-left: -39px;
+  }
+  
+  .classic-friesimg,
+  .jalapeno-burgerimg,
+  .curly-friesimg,
+  .sweet-potato-friesimg {
+    width: 80%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -60px;
+  }
+  
+  .coca-colaimg {
+    width: 40%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -58px;
+  }
+  
+  .spriteimg,
+  .royalimg {
+    width: 40%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -60px;
+  }
+  
+  .iced-teaimg {
+    width: 60%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -57px;
+  }
+  
+  .lemon-juiceimg {
+    width: 90%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -55px;
+  }
+  
+  .fruit-smoothieimg {
+    width: 110%;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+    margin-top: -50px;
+    margin-left: -4px;
+  }
+  
+  // Burger and Fries Details
+  .cheeseburger-details,
+  .mushroom-details,
+  .bbqbacon-details,
+  .jalapeno-details,
+  .angus-details,
+  .teriyaki-details,
+  .classic-fries-details,
+  .curly-fries-details,
+  .poutine-fries-details,
+  .sweet-potato-fries-details,
+  .coca-cola-details,
+  .sprite-details,
+  .royal-details,
+  .iced-tea-details,
+  .lemon-juice-details,
+  .fruit-smoothie-details {
+    color: white;
+    line-height: 1;
+    text-align: center;
+  }
+  
+  #cheeseburger-name,
+  #mushroom-name,
+  #bbqbacon-name,
+  #jalapeno-name,
+  #angus-name,
+  #teriyaki-name,
+  #classic-fries-name,
+  #curly-fries-name,
+  #poutine-fries-name,
+  #sweet-potato-fries-name,
+  #coca-cola-name,
+  #sprite-name,
+  #royal-name,
+  #iced-tea-name,
+  #lemon-juice-name,
+  #fruit-smoothie-name {
+    font-weight: 600;
+    font-size: 20px;
+    display: flex;
+    position: relative;
+    margin-top: 15px;
+    justify-content: center;
+  }
+  
+  #cheeseburger-price,
+  #mushroom-price,
+  #bbqbacon-price,
+  #jalapeno-price,
+  #teriyaki-price,
+  #angus-price,
+  #classic-fries-price,
+  #curly-fries-price,
+  #poutine-fries-price,
+  #sweet-potato-fries-price,
+  #coca-cola-price,
+  #sprite-price,
+  #royal-price,
+  #iced-tea-price,
+  #lemon-juice-price,
+  #fruit-smoothie-price {
+    margin-top: 12px;
+    font-size: 17.5px;
+    font-weight: 500;
+  }
+  
+  #cheeseburger-desc,
+  #mushroom-desc,
+  #bbqbacon-desc,
+  #jalapeno-desc,
+  #teriyaki-desc,
+  #angus-desc,
+  #classic-fries-desc,
+  #curly-fries-desc,
+  #poutine-fries-desc,
+  #sweet-potato-fries-desc,
+  #coca-cola-desc,
+  #sprite-desc,
+  #royal-desc,
+  #iced-tea-desc,
+  #lemon-juice-desc,
+  #fruit-smoothie-desc {
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 400;
+  }
+  
+  #classic-fries-desc {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+  #cheeseburger-stocks,
+  #mushroom-stocks,
+  #bbqbacon-stocks,
+  #teriyaki-stocks,
+  #jalapeno-stocks,
+  #angus-stocks,
+  #classic-fries-stocks,
+  #curly-fries-stocks,
+  #poutine-fries-stocks,
+  #sweet-potato-fries-stocks,
+  #coca-cola-stocks,
+  #sprite-stocks,
+  #royal-stocks,
+  #iced-tea-stocks,
+  #lemon-juice-stocks,
+  #fruit-smoothie-stocks {
+    margin-top: 15.5px;
+    margin-bottom: 8.5px;
+    font-size: 14px;
+    font-weight: 300;
+    color: lightgreen;
+  }
+  
+  /* Ordering System */
+  .orderingsyscontent {
+    width: 35%;
+    height: 89vh;
+    border-radius: 20px;
+    right: -12px;
+    margin-top: 51px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background-color: #121212;
+    color: white;
+    z-index: 4;
+  }
+  
+  .orderingsysheader {
+    position: relative;
+    width: 96.6%;
+    max-height: 100%;
+    padding-bottom: 9px;
+    background-color: #121212;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .orderingsysheader::after {
+    content: "";
+    position: absolute;
+    bottom: -35px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to top, transparent, #121212);
+    filter: blur(2.5px);
+    z-index: 6;
+  }
+  
+  #ordertime {
+    font-size: 13px;
+    margin-left: 20px;
+    color: grey;
+  }
+  
+  .orderqueuenumber {
+    font-size: 25px;
+    font-weight: 700;
+    margin-left: 20px;
+    margin-top: 12.5px;
+  }
+  
+  .startorder-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 98%;
+    height: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+  }
+  
+  .startorderbutton-wrapper {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #startorderbutton {
+    position: relative;
+    display: flex;
+    font-weight: 500;
+    font-size: 27px;
+    border: 1.5px solid grey;
+    border-radius: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    width: 200px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #c4635c;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &:hover {
+      background-color: #c4635c;
+      color: white;
+    }
+  }
+  
+  .startordertext {
+    width: 100%;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .ordermodeholder {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 15px;
+    display: none;
+  }
+  
+  .ordermodetitle {
+    font-size: 13px;
+    color: lightgrey;
+  }
+  
+  .ordermodebuttons {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 16.5px;
+    font-weight: 500;
+    margin-top: 3px;
+  }
+  
+  #dine-in,
+  #take-out,
+  #delivery {
+    border: 1px solid grey;
+    border-radius: 8px;
+    padding: 5px 9px;
+    max-width: 100%;
+    text-align: center;
+    color: #c4635c;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &:hover {
+      background-color: #c4635c;
+      color: white;
+    }
+  }
+  
+  #dine-in.active,
+  #take-out.active,
+  #delivery.active {
+    background-color: #c4635c;
+    color: white;
+  }
+  
+  .orderpromptholder {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 16.5px;
+    font-weight: 500;
+    display: none;
+  }
+  
+  .orderprompters {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 15px;
+    width: 100%;
+  }
+  
+  #itemprompter {
+    font-family: "Bricolage Grotesque", sans-serif;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    height: 20px;
+    padding: 6px 10px;
+    margin-top: 3px;
+    background-color: #2e2e2e;
+    white-space: pre-wrap;
+    color: white;
+    white-space: pre-wrap;
+    overflow: hidden;
+    transition: border 0.2s ease;
+  
+    &:focus {
+      outline: none;
+      color: white;
+    }
+  }
+  
+  .itemprompt {
+    width: 40%;
+  }
+  
+  .itemqtyprompt {
+    margin-left: 6%;
+    width: 40%;
+  }
+  
+  #itemqtyprompter {
+    font-family: "Bricolage Grotesque", sans-serif;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    height: 20px;
+    padding: 6px 10px;
+    margin-top: 3px;
+    background-color: #2e2e2e;
+    color: white;
+    white-space: pre-wrap;
+    overflow: hidden;
+    transition: border 0.2s ease;
+  
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  
+    &:focus {
+      outline: none;
+      color: white;
+    }
+  }
+  
+  .error {
+    border: 2px solid red !important;
+  }
+  
+  .errorempty,
+  .errorinvaliditemnumber,
+  .errorinvaliditemqty {
+    position: relative;
+    display: none;
+    font-size: 14px;
+    color: #f4364c;
+    margin-top: 4px;
+  }
+  
+  .itemprompttitle,
+  .itemqtyprompttitle {
+    font-size: 13px;
+    color: lightgrey;
+  }
+  
+  .orderlistcategories {
+    width: 100%;
+    max-height: 100%;
+    position: relative;
+    display: none;
+    flex-direction: row;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+    margin-left: 20px;
+    margin-top: 22.5px;
+  }
+  
+  .itemcategorytitle {
+    width: 67.5%;
+    text-align: left;
+  }
+  
+  .qtycategorytitle {
+    width: 10%;
+    text-align: center;
+  }
+  
+  .pricecategorytitle {
+    width: 17%;
+    text-align: center;
+  }
+  
+  .orderingsysbody {
+    width: 100%;
+    z-index: 1;
+  }
+  
+  .orderslist {
+    width: 96.6%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+    padding: 30px 0 600px;
+    overflow-y: auto;
+    max-height: 34vh;
+  }
+  
+  .item {
+    border: 2px solid #2e2e2e;
+    background-color: #121212;
+    border-radius: 15px;
+    width: 90%;
+    height: 122px;
+    padding-top: 12.5px;
+    padding-bottom: 12.5px;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .item-firstcolumn,
+  .item-secondcolumn {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+  }
+  
+  .item-secondcolumn {
+    margin-top: 11px;
+  }
+  
+  .item-detailsplaceholder {
+    display: flex;
+    position: relative;
+    align-items: center;
+    width: 75%;
+    height: 40px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 2.5px;
+  }
+  
+  .item-image {
+    display: flex;
+    position: relative;
+    width: 15%;
+    height: 80%;
+    padding: 5px;
+    margin-left: 5px;
+  }
+  
+  .item-details {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .item-name {
+    margin-left: 7px;
+    position: relative;
+    color: white;
+    font-weight: 600;
+    font-size: 17px;
+  }
+  
+  .item-price {
+    margin-left: 7px;
+    position: relative;
+    color: grey;
+    font-weight: 400;
+    font-size: 15px;
+  }
+  
+  .item-qty {
+    font-family: "Bricolage Grotesque", sans-serif;
+    border: none;
+    border-radius: 10px;
+    width: 13.5%;
+    height: 45px;
+    padding: 4px 8px;
+    margin-left: 5px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: #2e2e2e;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    white-space: pre-wrap;
+    line-height: 40px;
+    overflow: hidden;
+  
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .item-qtypricesubtotal {
+    width: 10.75%;
+    height: 40px;
+    padding: 6px 10px;
+    margin-left: 5px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 400;
+  }
+  
+  .item-notes {
+    font-family: "Bricolage Grotesque", sans-serif;
+    border: none;
+    border-radius: 10px;
+    width: 80%;
+    height: 45px;
+    padding: 4px 12px;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: #2e2e2e;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    white-space: pre-wrap;
+    line-height: 40px;
+    overflow: hidden;
+  
+    &::placeholder {
+      font-size: 16px;
+    }
+  
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .delete-button {
+    border: 2px solid red;
+    border-radius: 8px;
+    padding: 4px 8px;
+    width: 10%;
+    height: 45px;
+    display: flex;
+    margin: 0 auto;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: red;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &:hover {
+      background-color: #ff8080;
+      color: white;
+    }
+  }
+  
+  .ordersysfooter-wrapper {
+    position: absolute;
+    bottom: 0;
+    width: 98%;
+    max-height: 100%;
+    z-index: 6;
+    display: none;
+    flex-direction: column;
+  }
+  
+  .ordersysfooter {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    max-height: 100%;
+    padding-top: 12px;
+    margin-bottom: -10px;
+    background-color: #121212;
+    z-index: 6;
+    flex-direction: column;
+  }
+  
+  .ordersysfooter::after {
+    content: "";
+    position: absolute;
+    top: -6.5px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to top, transparent, #121212);
+    filter: blur(2.5px);
+    z-index: 8;
+  }
+  
+  .footerfirstcol,
+  .footersecondcol {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    z-index: 7;
+    display: flex;
+    flex-direction: row;
+    margin-top: 4px;
+  }
+  
+  .footerthirdcol {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    z-index: 7;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .calc-line {
+    width: 90%;
+    height: 2px;
+    background-color: grey;
+    text-align: center;
+  }
+  
+  .costsubtotal-title,
+  .vattax-title,
+  .costtotal-title {
+    position: relative;
+    display: flex;
+    color: grey;
+    margin-left: 30px;
+    font-size: 15px;
+    font-weight: 400;
+  }
+  
+  .costsubtotal-calc,
+  .vattax-calc,
+  .costtotal-calc {
+    position: absolute;
+    display: flex;
+    color: white;
+    right: 0;
+    margin-right: 30px;
+    font-size: 15px;
+    font-weight: 400;
+  }
+  
+  .footerfourthcol {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    z-index: 7;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .footerfifthcol {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    z-index: 7;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .submitorderbutton {
+    position: relative;
+    display: flex;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 400;
+    width: 90%;
+    height: 45px;
+    border: 1.25px solid grey;
+    border-radius: 10px;
+    background-color: none;
+    cursor: pointer;
+    transform: scale(1);
+    box-shadow: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+      background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #c4635c;
+      transform: scale(1.015);
+      box-shadow: 0 0 13px rgba(196, 99, 92, 0.6);
+    }
+  }
+  
