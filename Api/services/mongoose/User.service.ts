@@ -16,6 +16,11 @@ export class UserService {
         return await user.save();
     }
 
+    async createUserRoot(nom: string, prenom: string, email: string, motDePasse: any, tel: any, role: any): Promise<IUser> {
+        const user = new this.model({ Nom: nom, Prenom: prenom, Email: email, MotDePasse: motDePasse, Tel: tel, Role: role});
+        return await user.save();
+    }
+
     // Obtenir tous les utilisateurs
     async getUsers(): Promise<IUser[]> {
         return await this.model.find().exec();
