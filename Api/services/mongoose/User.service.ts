@@ -31,6 +31,16 @@ export class UserService {
         return await this.model.findById(id).exec();
     }
 
+    async getUserByIdWithAddress(id: string): Promise<IUser | null> {
+        return await this.model.findById(id)
+            .populate({
+                path: "Adresse",
+                select: "Numero Rue Ville CodePostal"
+            })
+            .exec();
+    }
+    
+
     // Mettre à jour un utilisateur
     async updateUser(id: string, data: Partial<IUser>): Promise<IUser | null> {
         return await this.model.findByIdAndUpdate(id, data, { new: true }).exec();
@@ -44,5 +54,7 @@ export class UserService {
     async findUserByLogin(login: string): Promise<IUser | null> {
         return await this.model.findOne({ login }).exec();
     }
+
+
     
 }

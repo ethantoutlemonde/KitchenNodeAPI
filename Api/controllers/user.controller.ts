@@ -108,6 +108,27 @@ export class UserController {
         }
     }
 
+    async getByIdWithAddress(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            if (!req.params.id) {
+                res.status(400).json({ error: "Missing ID parameter" });
+                return;
+            }
+    
+            const userService = (await MongooseService.getInstance()).userService;
+            const user = await userService.getUserByIdWithAddress(req.params.id);
+    
+            if (!user) {
+                res.status(404).json({ error: "User not found" });
+                return;
+            }
+    
+            res.status(200).json(user);
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
     buildRouter(): express.Router {
         const router = express.Router();
         router.get("/users", express.json(), this.getAll.bind(this));
@@ -115,6 +136,7 @@ export class UserController {
         router.post("/users", express.json(), this.create.bind(this));
         router.put("/users/:id", express.json(), this.update.bind(this));
         router.delete("/users/:id", this.delete.bind(this));
+        router.get("/users/details/:id", express.json(), this.getByIdWithAddress.bind(this));
         return router;
     }
 }

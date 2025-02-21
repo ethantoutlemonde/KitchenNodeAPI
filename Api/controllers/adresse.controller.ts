@@ -15,7 +15,7 @@ export class AdresseController {
 
     async createAdresse(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const { numero, rue, ville, codePostal, country } = req.body;
+            const { numero, rue, ville, codePostal} = req.body;
     
             // Vérification des champs requis
             if (!rue || !ville || !codePostal) {
@@ -26,7 +26,7 @@ export class AdresseController {
             // Création de l'adresse via le service en utilisant les paramètres individuellement
             const mongooseService = await MongooseService.getInstance();
             const adresseService = mongooseService.adresseService;
-            const adresse = await adresseService.createAdresse(numero, rue, ville, codePostal, country);
+            const adresse = await adresseService.createAdresse(numero, rue, ville, codePostal);
     
             res.status(201).json(adresse);
         } catch (error) {
@@ -37,12 +37,36 @@ export class AdresseController {
     
 
     async getAdresses(req: express.Request, res: express.Response): Promise<void> {
-        const mongooseService = await MongooseService.getInstance();
-        const adresseService = mongooseService.adresseService;
-        const adresses = await adresseService.getAdresses();
-        res.json(adresses);
+        try {
+            console.log("📢 getAdresses() called"); // Log de début
+    
+            const mongooseService = await MongooseService.getInstance();
+            console.log("✅ MongooseService retrieved:", mongooseService ? "OK" : "FAILED");
+    
+            const adresseService = mongooseService.adresseService;
+            console.log("✅ AdresseService retrieved:", adresseService ? "OK" : "FAILED");
+    
+            if (!adresseService) {
+                throw new Error("adresseService is undefined");
+            }
+    
+            const adresses = await adresseService.getAdresses();
+            console.log("✅ Adresses retrieved:", adresses);
+    
+            if (!adresses || adresses.length === 0) {
+                throw new Error("No addresses found in database");
+            }
+    
+            res.json(adresses);
+        } catch (error: unknown) {
+            const err = error as Error; // Cast 'error' en Error
+            console.error("🔥 Error in getAdresses:", err.message); // Affiche l'erreur proprement
+            res.status(500).json({ error: "Failed to fetch addresses", details: err.message });
+        }
+        
     }
-
+    
+    
     async getAdresseById(req: express.Request, res: express.Response): Promise<void> {
         if (!req.params.id) {
             res.status(400).end();

@@ -10,17 +10,17 @@ export class AdresseService {
         this.model = mongoose.model<IAdresse>("Adresse", adresseSchema);
     }
 
-    async createAdresse(user: string, street: string, city: string, postalCode: string, country: string): Promise<IAdresse> {
-        const adresse = new this.model({ User: user, Street: street, City: city, PostalCode: postalCode, Country: country });
+    async createAdresse(numero: number, rue: string, ville: string, codePostal: number): Promise<IAdresse> {
+        const adresse = new this.model({ Numero: numero, Rue: rue, Ville: ville, CodePostal: codePostal });
         return await adresse.save();
     }
-
+    
     async getAdresses(): Promise<IAdresse[]> {
-        return await this.model.find().populate("User").exec();
+        return await this.model.find().exec();
     }
 
     async getAdresseById(id: string): Promise<IAdresse | null> {
-        return await this.model.findById(id).populate("User").exec();
+        return await this.model.findById(id).exec();
     }
 
     async updateAdresse(id: string, data: Partial<IAdresse>): Promise<IAdresse | null> {
