@@ -68,8 +68,12 @@ async function setupAPI(): Promise<void> {
     if (!rootUser) {
         const user = await userService.createUser(
             'employee',
+            'employee',
             'root@esgiking.fr',
-            'root'
+            'root',
+            "0612345678",
+            'Bigboss',
+            3
         );
     }
 }
