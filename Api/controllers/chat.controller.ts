@@ -14,16 +14,27 @@ export class ChatController {
     }
 
     async createChat(req: express.Request, res: express.Response): Promise<void> {
-        if (!req.body || !req.body.user || !req.body.message) {
-            res.status(400).end();
-            return;
+        try {
+            // Vérification des champs requis
+            const { user1, user2, message} = req.body;
+    
+            if (!user1 || !user2 || !message) {
+                res.status(400).json({ error: "Missing required fields: user1, user2, message" });
+                return;
+            }
+    
+            // Création du chat via le service
+            const mongooseService = await MongooseService.getInstance();
+            const chatService = mongooseService.chatService;
+            const chat = await chatService.createChat(user1, user2, message); // On passe la date actuelle
+    
+            res.status(201).json(chat);
+        } catch (error) {
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create chat" });
         }
-        
-        const mongooseService = await MongooseService.getInstance();
-        const chatService = mongooseService.chatService;
-        const chat = await chatService.createChat(req.body.user, req.body.message, req.body.restaurant);
-        res.status(201).json(chat);
     }
+    
 
     async getChats(req: express.Request, res: express.Response): Promise<void> {
         const mongooseService = await MongooseService.getInstance();

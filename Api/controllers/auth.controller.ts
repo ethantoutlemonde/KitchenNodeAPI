@@ -4,6 +4,9 @@ import {MongooseService} from "../services";
 
 export class AuthController {
 
+
+    
+
     // private static instance?: AuthController;
 
     // static getInstance(): AuthController {

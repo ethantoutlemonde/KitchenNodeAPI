@@ -13,7 +13,7 @@ export class UserController {
 
     async create(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const { nom, email, motDePasse } = req.body;
+            const { nom, prenom, email, motDePasse, tel, role, adresse } = req.body;
 
             // Vérification des champs requis
             if (!nom || !email || !motDePasse) {
@@ -21,8 +21,13 @@ export class UserController {
                 return;
             }
 
+            if (role && !['Bigboss', 'Admin', 'Customer', 'Preparateur', 'Livreur'].includes(role)) {
+                res.status(400).json({ error: "Invalid role specified" });
+                return;
+            }
+
             const userService = (await MongooseService.getInstance()).userService;
-            const user = await userService.createUser(nom, email, motDePasse);
+            const user = await userService.createUser(nom, prenom, email, motDePasse, tel, role, adresse);
 
             res.status(201).json(user);
         } catch (error) {

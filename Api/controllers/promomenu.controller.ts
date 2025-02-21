@@ -11,21 +11,28 @@ export class PromoMenuController {
         return PromoMenuController.instance;
     }
 
-    async create(req: Request, res: Response): Promise<void> {
+    async createPromoMenu(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.promo || !req.body.menu) {
-                res.status(400).json({ error: "Missing required fields: promo, menu" });
+            // Vérification des champs requis
+            const { menu, promotion } = req.body;
+    
+            if (!menu || !promotion) {
+                res.status(400).json({ error: "Missing required fields: menu, promotion" });
                 return;
             }
-
+    
+            // Création de la promoMenu via le service
             const mongooseService = await MongooseService.getInstance();
             const promoMenuService = mongooseService.promoMenuService;
-            const promoMenu = await promoMenuService.createPromoMenu(req.body.promo, req.body.menu);
+            const promoMenu = await promoMenuService.createPromoMenu(menu, promotion);
+    
             res.status(201).json(promoMenu);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create promoMenu" });
         }
     }
+    
 
     async getAll(req: Request, res: Response): Promise<void> {
         try {
@@ -102,7 +109,7 @@ export class PromoMenuController {
         const router = express.Router();
         router.get("/promomenus", this.getAll.bind(this));
         router.get("/promomenus/:id", this.getById.bind(this));
-        router.post("/promomenus", this.create.bind(this));
+        router.post("/promomenus", this.createPromoMenu.bind(this));
         router.put("/promomenus/:id", this.update.bind(this));
         router.delete("/promomenus/:id", this.delete.bind(this));
         return router;

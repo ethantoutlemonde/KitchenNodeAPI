@@ -14,16 +14,27 @@ export class AdresseController {
     }
 
     async createAdresse(req: express.Request, res: express.Response): Promise<void> {
-        if (!req.body) {
-            res.status(400).end();
-            return;
+        try {
+            const { numero, rue, ville, codePostal, country } = req.body;
+    
+            // Vérification des champs requis
+            if (!rue || !ville || !codePostal) {
+                res.status(400).json({ error: "Missing required fields: rue, ville, codePostal" });
+                return;
+            }
+    
+            // Création de l'adresse via le service en utilisant les paramètres individuellement
+            const mongooseService = await MongooseService.getInstance();
+            const adresseService = mongooseService.adresseService;
+            const adresse = await adresseService.createAdresse(numero, rue, ville, codePostal, country);
+    
+            res.status(201).json(adresse);
+        } catch (error) {
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create address" });
         }
-        
-        const mongooseService = await MongooseService.getInstance();
-        const adresseService = mongooseService.adresseService;
-        const adresse = await adresseService.createAdresse(req.body.user, req.body.street, req.body.city, req.body.postalCode, req.body.country);
-        res.status(201).json(adresse);
     }
+    
 
     async getAdresses(req: express.Request, res: express.Response): Promise<void> {
         const mongooseService = await MongooseService.getInstance();

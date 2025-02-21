@@ -13,21 +13,28 @@ export class ContientController {
         return ContientController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createContient(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.panier || !req.body.produit) {
-                res.status(400).json({ error: "Missing required fields: panier, produit" });
+            // Vérification des champs requis
+            const { produitId, ingredientId, quantite } = req.body;
+    
+            if (!produitId || !ingredientId || !quantite) {
+                res.status(400).json({ error: "Missing required fields: produitId, ingredientId, quantite" });
                 return;
             }
-
+    
+            // Création de l'entrée 'contient' via le service
             const mongooseService = await MongooseService.getInstance();
             const contientService = mongooseService.contientService;
-            const contient = await contientService.createContient(req.body.panier, req.body.produit);
+            const contient = await contientService.createContient(produitId, ingredientId, quantite);
+    
             res.status(201).json(contient);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create contient" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class ContientController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createContient.bind(this)
         );
         router.put(
             "/contients/:id",

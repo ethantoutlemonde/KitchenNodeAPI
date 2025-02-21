@@ -45,7 +45,7 @@ export class MongooseService {
     public restaurantService: RestaurantService;
     public sessionService: SessionService;
     public userService: UserService;
-    public vendreService: VendreService;
+    public vendService: VendreService;
 
     private constructor(mongoose: Mongoose) {
         this.mongoose = mongoose;
@@ -69,7 +69,7 @@ export class MongooseService {
         this.restaurantService = new RestaurantService();
         this.sessionService = new SessionService();
         this.userService = new UserService();
-        this.vendreService = new VendreService();
+        this.vendService = new VendreService();
     }
 
     public static async getInstance(): Promise<MongooseService> {

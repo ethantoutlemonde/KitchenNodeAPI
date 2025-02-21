@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 export interface IUser {
     Mail?: string;
     Password?: string;
+    Salt?: string;
     Nom: string;
     Prenom: string;
     Tel?: string;

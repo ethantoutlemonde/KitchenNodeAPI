@@ -11,8 +11,8 @@ export class MenuService {
     }
 
     // Créer un menu
-    async createMenu(nom: string, description: string): Promise<IMenu> {
-        const menu = new this.model({ Nom: nom, Description: description });
+    async createMenu(nom: string, description: string, Prix: number, Disponible: boolean, Image: string ,Produits : number): Promise<IMenu> {
+        const menu = new this.model({ Nom: nom, Description: description, Prix: Prix, Disponible: Disponible, Image: Image, Produits: Produits });
         return await menu.save();
     }
 

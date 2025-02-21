@@ -14,16 +14,41 @@ export class CommandeController {
     }
 
     async createCommande(req: express.Request, res: express.Response): Promise<void> {
-        if (!req.body || !req.body.user || !req.body.items || !req.body.total) {
-            res.status(400).end();
-            return;
+        try {
+            // Vérification des champs requis
+            const { user, panier, total, latitude, longitude, adresseId, status } = req.body;
+    
+            if (!user || !panier || !total || !latitude || !longitude || !adresseId || !status) {
+                res.status(400).json({ error: "Missing required fields: user, items, total, latitude, longitude, adresseId, status" });
+                return;
+            }
+    
+            // Vérification du statut valide
+            const validStatuses = ['Paye', 'en cours de preparation', 'en cours de livaison', 'livre'];
+            if (!validStatuses.includes(status)) {
+                res.status(400).json({ error: "Invalid status value" });
+                return;
+            }
+    
+            // Création de la commande via le service
+            const mongooseService = await MongooseService.getInstance();
+            const commandeService = mongooseService.commandeService;
+            const commande = await commandeService.createCommande(
+                user, // Utilisation de l'identifiant de l'utilisateur
+                panier, // Assure-toi que `items` correspond à un panier existant ou à un tableau d'objets valide
+                status,
+                latitude,
+                longitude,
+                adresseId, // Utilisation de l'identifiant d'adresse
+            );
+            
+            res.status(201).json(commande);
+        } catch (error) {
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create commande" });
         }
-        
-        const mongooseService = await MongooseService.getInstance();
-        const commandeService = mongooseService.commandeService;
-        const commande = await commandeService.createCommande(req.body.user, req.body.items, req.body.total);
-        res.status(201).json(commande);
     }
+    
 
     async getCommandes(req: express.Request, res: express.Response): Promise<void> {
         const mongooseService = await MongooseService.getInstance();

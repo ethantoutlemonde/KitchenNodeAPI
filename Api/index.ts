@@ -66,10 +66,13 @@ async function setupAPI(): Promise<void> {
     const userService = mongooseService.userService;
     const rootUser = await userService.findUserByLogin("root");
     if (!rootUser) {
-        const user = await userService.createUser(
+        const user = await userService.createUserRoot(
+            'employee',
             'employee',
             'root@esgiking.fr',
-            'root'
+            'root',
+            "0612345678",
+            'Bigboss',
         );
     }
 }

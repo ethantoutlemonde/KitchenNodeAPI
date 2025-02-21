@@ -1,18 +1,18 @@
 import { Model } from "mongoose";
 import { IVend } from "../../models";
-import { vendSchema } from "./schema";
+import { vendreSchema } from "./schema";
 import mongoose from "mongoose";
 
 export class VendreService {
     private model: Model<IVend>;
 
     constructor() {
-        this.model = mongoose.model<IVend>("Vendre", vendSchema);
+        this.model = mongoose.model<IVend>("Vendre", vendreSchema);
     }
 
     // Créer une vente
-    async createVendre(userId: string, produitId: string, quantite: number): Promise<IVend> {
-        const vente = new this.model({ User: userId, Produit: produitId, Quantite: quantite });
+    async createVendre(Restaurant: string, Produit: string): Promise<IVend> {
+        const vente = new this.model({ Restaurant, Produit });
         return await vente.save();
     }
 

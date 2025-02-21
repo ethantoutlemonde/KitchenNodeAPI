@@ -11,8 +11,8 @@ export class ProduitService {
     }
 
     // Créer un produit
-    async createProduit(nom: string, prix: number): Promise<IProduit> {
-        const produit = new this.model({ Nom: nom, Prix: prix });
+    async createProduit(nom: string, prix: number, description : string, image: string, disponible:boolean): Promise<IProduit> {
+        const produit = new this.model({ Nom: nom, Prix: prix, Description: description, Image: image, Disponible: disponible });
         return await produit.save();
     }
 

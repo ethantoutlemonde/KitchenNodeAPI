@@ -13,21 +13,28 @@ export class MenuController {
         return MenuController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createMenu(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.name || !req.body.items) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { nom, description, prix, disponible, image, produits } = req.body;
+    
+            if (!nom || !description || !prix || !disponible || !image || !produits) {
+                res.status(400).json({ error: "Missing required fields: nom, description, prix, disponible, image, produits" });
                 return;
             }
-            
+    
+            // Création du menu via le service
             const mongooseService = await MongooseService.getInstance();
             const menuService = mongooseService.menuService;
-            const menu = await menuService.createMenu(req.body.name, req.body.items);
+            const menu = await menuService.createMenu(nom, description, prix, disponible, image, produits);
+    
             res.status(201).json(menu);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create menu" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class MenuController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createMenu.bind(this)
         );
         router.put(
             "/menus/:id",

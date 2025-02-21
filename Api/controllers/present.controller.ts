@@ -13,21 +13,28 @@ export class PresentController {
         return PresentController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPresent(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.name) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { restaurant, promotion } = req.body;
+    
+            if (!restaurant || !promotion) {
+                res.status(400).json({ error: "Missing required fields: restaurant, promotion" });
                 return;
             }
-            
+    
+            // Création de l'association entre un restaurant et une promotion via le service
             const mongooseService = await MongooseService.getInstance();
             const presentService = mongooseService.presentService;
-            const present = await presentService.createPresent(req.body.produit, req.body.promotion);
+            const present = await presentService.createPresent(restaurant, promotion);
+    
             res.status(201).json(present);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create present" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class PresentController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createPresent.bind(this)
         );
         router.put(
             "/presents/:id",
