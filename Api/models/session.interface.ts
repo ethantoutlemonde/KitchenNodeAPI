@@ -1,7 +1,10 @@
 import { Types } from "mongoose";
+import { IUser } from "./user.interface";
 
 export interface ISession {
-    Token: string;
-    DATEHEURE: Date;
-    User: Types.ObjectId; // Référence à la collection User
+    _id?: string;
+    Token: string; // 🔥 Vérifie bien que ce champ existe
+    user: Types.ObjectId | IUser;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

@@ -1,38 +1,27 @@
 import { Model } from "mongoose";
-import { ISession } from "../../models";
-import { sessionSchema } from "./schema";
+import { ISession } from "../../models/session.interface";
+import SessionSchema from "../mongoose/schema/SessionSchema"; // 🔥 Correction de l'import
 import mongoose from "mongoose";
+import crypto from "crypto"; // 🔥 Pour générer un Token aléatoire
 
 export class SessionService {
     private model: Model<ISession>;
 
     constructor() {
-        this.model = mongoose.model<ISession>("Session", sessionSchema);
+        this.model = mongoose.model<ISession>("Session", SessionSchema);
     }
 
-    // Créer une session
-    async createSession(token: string, user: string, dateHeure: Date): Promise<ISession> {
-        const session = new this.model({Token: token,  User: user, DATEHEURE: dateHeure});
+    async createSession(data: { user: any }): Promise<ISession> {
+        const token = crypto.randomBytes(32).toString("hex"); // 🔥 Génère un Token aléatoire
+        const session = new this.model({ Token: token, user: data.user });
         return await session.save();
     }
 
-    // Obtenir toutes les sessions
-    async getSessions(): Promise<ISession[]> {
-        return await this.model.find().exec();
+    async getSessionById(sessionId: string): Promise<ISession | null> {
+        return await this.model.findById(sessionId).populate("user").exec();
     }
 
-    // Obtenir une session par ID
-    async getSessionById(id: string): Promise<ISession | null> {
-        return await this.model.findById(id).exec();
-    }
-
-    // Mettre à jour une session
-    async updateSession(id: string, data: Partial<ISession>): Promise<ISession | null> {
-        return await this.model.findByIdAndUpdate(id, data, { new: true }).exec();
-    }
-
-    // Supprimer une session
-    async deleteSession(id: string): Promise<ISession | null> {
-        return await this.model.findByIdAndDelete(id).exec();
+    async deleteSession(sessionId: string): Promise<void> {
+        await this.model.findByIdAndDelete(sessionId);
     }
 }

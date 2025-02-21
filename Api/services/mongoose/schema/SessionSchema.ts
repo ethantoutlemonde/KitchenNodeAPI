@@ -1,23 +1,11 @@
-import { Schema } from "mongoose";
-import { ISession } from "../../../models";
+import mongoose, { Schema } from "mongoose";
 
-export const sessionSchema = new Schema<ISession>({
-    Token: {
-        type: String,
-        required: true,
-        unique: true
+const SessionSchema = new Schema(
+    {
+        Token: { type: String, required: true }, // 🔥 Ajout du Token
+        user: { type: Schema.Types.ObjectId, ref: "User", required: true } // Référence à l'utilisateur
     },
-    DATEHEURE: {
-        type: Date,
-        required: true
-    },
-    User: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
-}, {
-    timestamps: true,
-    collection: 'sessions',
-    versionKey: false
-});
+    { timestamps: true } // Ajoute `createdAt` et `updatedAt`
+);
+
+export default SessionSchema; // 🔥 Vérifie bien cet export

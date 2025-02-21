@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IUser {
+    _id?: Types.ObjectId; // 🔥 Ajoute cette ligne pour éviter l'erreur
     Mail?: string;
     Password?: string;
     Salt?: string;
