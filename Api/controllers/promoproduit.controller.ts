@@ -11,24 +11,28 @@ export class PromoproduitController {
         return PromoproduitController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPromoProduit(req: express.Request, res: express.Response): Promise<void> {
         try {
+            // Vérification des champs requis
             const { produit, promotion } = req.body;
-
+    
             if (!produit || !promotion) {
-                res.status(400).json({ error: "Missing required fields: produit and promotion" });
+                res.status(400).json({ error: "Missing required fields: produit, promotion" });
                 return;
             }
-
+    
+            // Création de la promoProduit via le service
             const mongooseService = await MongooseService.getInstance();
-            const promoproduitService = mongooseService.promoProduitService;
-            const promoproduit = await promoproduitService.createPromoProduit(produit, promotion);
-
-            res.status(201).json(promoproduit);
+            const promoProduitService = mongooseService.promoProduitService;
+            const promoProduit = await promoProduitService.createPromoProduit(produit, promotion);
+    
+            res.status(201).json(promoProduit);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create promoProduit" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -112,7 +116,7 @@ export class PromoproduitController {
         const router = express.Router();
         router.get("/promoproduits", express.json(), this.getAll.bind(this));
         router.get("/promoproduits/:id", express.json(), this.getById.bind(this));
-        router.post("/promoproduits", express.json(), this.create.bind(this));
+        router.post("/promoproduits", express.json(), this.createPromoProduit.bind(this));
         router.put("/promoproduits/:id", express.json(), this.update.bind(this));
         router.delete("/promoproduits/:id", this.delete.bind(this));
         return router;

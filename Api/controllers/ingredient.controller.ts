@@ -13,21 +13,28 @@ export class IngredientController {
         return IngredientController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createIngredient(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.name || !req.body.quantity) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { nom } = req.body;
+    
+            if (!nom) {
+                res.status(400).json({ error: "Missing required field: nom" });
                 return;
             }
-            
+    
+            // Création de l'ingrédient via le service
             const mongooseService = await MongooseService.getInstance();
             const ingredientService = mongooseService.ingredientService;
-            const ingredient = await ingredientService.createIngredient(req.body.name, req.body.quantity);
+            const ingredient = await ingredientService.createIngredient(nom);
+    
             res.status(201).json(ingredient);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create ingredient" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class IngredientController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createIngredient.bind(this)
         );
         router.put(
             "/ingredients/:id",

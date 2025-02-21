@@ -11,25 +11,27 @@ export class SessionController {
         return SessionController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createSession(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const { nom, utilisateur, dateDebut, dateFin } = req.body;
-
-            // Vérifier que tous les champs sont fournis
-            if (!nom || !utilisateur || !dateDebut || !dateFin) {
-                res.status(400).json({ error: "Missing required fields: nom, utilisateur, dateDebut, dateFin" });
+            const { token, dateHeure, user } = req.body;
+    
+            if (!token || !dateHeure || !user) {
+                res.status(400).json({ error: "Missing required fields: token, dateHeure, or user" });
                 return;
             }
-
+    
+            // Créer une nouvelle session avec les données
             const mongooseService = await MongooseService.getInstance();
             const sessionService = mongooseService.sessionService;
-            const session = await sessionService.createSession(nom, utilisateur);
-
+            const session = await sessionService.createSession(token, dateHeure, user);
+    
             res.status(201).json(session);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create session" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -113,7 +115,7 @@ export class SessionController {
         const router = express.Router();
         router.get("/sessions", express.json(), this.getAll.bind(this));
         router.get("/sessions/:id", express.json(), this.getById.bind(this));
-        router.post("/sessions", express.json(), this.create.bind(this));
+        router.post("/sessions", express.json(), this.createSession.bind(this));
         router.put("/sessions/:id", express.json(), this.update.bind(this));
         router.delete("/sessions/:id", this.delete.bind(this));
         return router;

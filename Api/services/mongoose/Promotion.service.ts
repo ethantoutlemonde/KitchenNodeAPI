@@ -11,8 +11,8 @@ export class PromotionService {
     }
 
     // Créer une promotion
-    async createPromotion(nom: string, description: string, pourcentage: number): Promise<IPromotion> {
-        const promotion = new this.model({ Nom: nom, Description: description, Pourcentage: pourcentage });
+    async createPromotion(nom: string, description: string, offrePourcent: number, OffrePrix: number, Debut: Date, Fin: Date): Promise<IPromotion> {
+        const promotion = new this.model({ Nom: nom, Description: description, Pourcentage: offrePourcent, Prix: OffrePrix, Debut, Fin });
         return await promotion.save();
     }
 

@@ -11,7 +11,7 @@ export class UserService {
     }
 
     // Créer un utilisateur
-    async createUser(nom: string, email: string, motDePasse: string): Promise<IUser> {
+    async createUser(nom: string, email: string, motDePasse: string, motDePasse: any, tel: any, role: any, adresse: any): Promise<IUser> {
         const user = new this.model({ Nom: nom, Email: email, MotDePasse: motDePasse });
         return await user.save();
     }

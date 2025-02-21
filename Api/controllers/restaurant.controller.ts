@@ -11,25 +11,28 @@ export class RestaurantController {
         return RestaurantController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createRestaurant(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const { nom, description, adresse } = req.body;
-
-            // Vérifier que tous les champs sont fournis
-            if (!nom || !description || !adresse) {
-                res.status(400).json({ error: "Missing required fields: nom, description, adresse" });
+            // Vérification des champs requis
+            const { nom, tel, adresse } = req.body;
+    
+            if (!nom || !adresse) {
+                res.status(400).json({ error: "Missing required fields: nom, adresse" });
                 return;
             }
-
+    
+            // Création du restaurant via le service
             const mongooseService = await MongooseService.getInstance();
             const restaurantService = mongooseService.restaurantService;
-            const restaurant = await restaurantService.createRestaurant(nom, description, adresse);
-
+            const restaurant = await restaurantService.createRestaurant(nom, tel, adresse);
+    
             res.status(201).json(restaurant);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create restaurant" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -113,7 +116,7 @@ export class RestaurantController {
         const router = express.Router();
         router.get("/restaurants", express.json(), this.getAll.bind(this));
         router.get("/restaurants/:id", express.json(), this.getById.bind(this));
-        router.post("/restaurants", express.json(), this.create.bind(this));
+        router.post("/restaurants", express.json(), this.createRestaurant.bind(this));
         router.put("/restaurants/:id", express.json(), this.update.bind(this));
         router.delete("/restaurants/:id", this.delete.bind(this));
         return router;

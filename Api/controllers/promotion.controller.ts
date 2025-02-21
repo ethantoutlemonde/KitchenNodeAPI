@@ -11,25 +11,28 @@ export class PromotionController {
         return PromotionController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPromotion(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const { nom, description, pourcentage } = req.body;
-
-            // Vérifier que tous les champs sont fournis
-            if (!nom || !description || pourcentage === undefined) {
-            res.status(400).json({ error: "Missing required fields: nom, description, pourcentage" });
-            return;
-        }
-
+            // Vérification des champs requis
+            const { nom, description, offrePourcent, offrePrix, debut, fin } = req.body;
+    
+            if (!nom || !description || !debut || !fin) {
+                res.status(400).json({ error: "Missing required fields: nom, description, debut, fin" });
+                return;
+            }
+    
+            // Création de la promotion via le service
             const mongooseService = await MongooseService.getInstance();
             const promotionService = mongooseService.promotionService;
-            const promotion = await promotionService.createPromotion(req.body.nom, req.body.description, req.body.pourcentage);
-
+            const promotion = await promotionService.createPromotion(nom, description, offrePourcent, offrePrix, debut, fin);
+    
             res.status(201).json(promotion);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create promotion" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -113,7 +116,7 @@ export class PromotionController {
         const router = express.Router();
         router.get("/promotions", express.json(), this.getAll.bind(this));
         router.get("/promotions/:id", express.json(), this.getById.bind(this));
-        router.post("/promotions", express.json(), this.create.bind(this));
+        router.post("/promotions", express.json(), this.createPromotion.bind(this));
         router.put("/promotions/:id", express.json(), this.update.bind(this));
         router.delete("/promotions/:id", this.delete.bind(this));
         return router;

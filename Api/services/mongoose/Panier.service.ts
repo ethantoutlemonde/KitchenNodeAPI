@@ -11,8 +11,8 @@ export class PanierService {
     }
 
     // Créer un panier
-    async createPanier(user: string, items: string[]): Promise<IPanier> {
-        const panier = new this.model({ User: user, Items: items });
+    async createPanier(user: string): Promise<IPanier> {
+        const panier = new this.model({ User: user});
         return await panier.save();
     }
 

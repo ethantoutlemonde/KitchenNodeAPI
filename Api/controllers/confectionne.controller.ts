@@ -14,16 +14,27 @@ export class ConfectionneController {
     }
 
     async createConfectionne(req: express.Request, res: express.Response): Promise<void> {
-        if (!req.body || !req.body.commande || !req.body.produit) {
-            res.status(400).end();
-            return;
+        try {
+            // Vérification des champs requis
+            const { userId, commandeId } = req.body;
+    
+            if (!userId || !commandeId) {
+                res.status(400).json({ error: "Missing required fields: userId, commandeId" });
+                return;
+            }
+    
+            // Création de l'entrée de confection via le service
+            const mongooseService = await MongooseService.getInstance();
+            const confectionneService = mongooseService.confectionneService;
+            const confectionne = await confectionneService.createConfectionne(userId, commandeId);
+    
+            res.status(201).json(confectionne);
+        } catch (error) {
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create confectionne" });
         }
-        
-        const mongooseService = await MongooseService.getInstance();
-        const confectionneService = mongooseService.confectionneService;
-        const confectionne = await confectionneService.createConfectionne(req.body.commande, req.body.produit);
-        res.status(201).json(confectionne);
     }
+    
 
     async getConfectionnes(req: express.Request, res: express.Response): Promise<void> {
         const mongooseService = await MongooseService.getInstance();

@@ -11,8 +11,8 @@ export class SessionService {
     }
 
     // Créer une session
-    async createSession(userId: string, token: string): Promise<ISession> {
-        const session = new this.model({ User: userId, Token: token });
+    async createSession(token: string, user: string, dateHeure: Date): Promise<ISession> {
+        const session = new this.model({Token: token,  User: user, DATEHEURE: dateHeure});
         return await session.save();
     }
 

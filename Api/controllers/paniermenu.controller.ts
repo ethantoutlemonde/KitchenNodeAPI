@@ -13,21 +13,28 @@ export class PaniermenuController {
         return PaniermenuController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPanierMenu(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { menu, panier } = req.body;
+    
+            if (!menu || !panier) {
+                res.status(400).json({ error: "Missing required fields: menu, panier" });
                 return;
             }
-            
+    
+            // Création de l'association entre un menu et un panier via le service
             const mongooseService = await MongooseService.getInstance();
-            const paniermenuService = mongooseService.panierMenuService;
-            const paniermenu = await paniermenuService.createPanierMenu(req.body.panier, req.body.menu);
-            res.status(201).json(paniermenu);
+            const panierMenuService = mongooseService.panierMenuService;
+            const panierMenu = await panierMenuService.createPanierMenu(menu, panier);
+    
+            res.status(201).json(panierMenu);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create panierMenu" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class PaniermenuController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createPanierMenu.bind(this)
         );
         router.put(
             "/paniersmenus/:id",
