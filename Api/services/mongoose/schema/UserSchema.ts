@@ -14,20 +14,21 @@ export const userSchema = new Schema<IUser>({
     },
     Prenom: {
         type: String,
-        required: true
+        required: false
     },
     Tel: {
-        type: String
+        type: String,
+        required: false
     },
     Role: {
         type: String,
         enum: ['Bigboss', 'Admin', 'Customer', 'Preparateur', 'Livreur'],
-        required: true
+        required: false
     },
     Adresse: {
         type: Schema.Types.ObjectId,
         ref: 'Adresse',
-        required: true
+        required: false
     }
 }, {
     timestamps: true,
