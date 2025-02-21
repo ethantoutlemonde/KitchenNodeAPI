@@ -3,27 +3,27 @@ import { MongooseService } from "../services";
 // import { sessionMiddleware, roleMiddleware } from "../middleware";
 // import { IEmployeeRole } from "../models";
 
-export class ConfectionneController {
-    private static instance?: ConfectionneController;
+export class ContientController {
+    private static instance?: ContientController;
 
-    static getInstance(): ConfectionneController {
-        if (!ConfectionneController.instance) {
-            ConfectionneController.instance = new ConfectionneController();
+    static getInstance(): ContientController {
+        if (!ContientController.instance) {
+            ContientController.instance = new ContientController();
         }
-        return ConfectionneController.instance;
+        return ContientController.instance;
     }
 
     async create(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.commande || !req.body.produit) {
-                res.status(400).json({ error: "Missing required fields" });
+            if (!req.body || !req.body.panier || !req.body.produit) {
+                res.status(400).json({ error: "Missing required fields: panier, produit" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const confectionneService = mongooseService.confectionneService;
-            const confectionne = await confectionneService.createConfectionne(req.body.commande, req.body.produit);
-            res.status(201).json(confectionne);
+            const contientService = mongooseService.contientService;
+            const contient = await contientService.createContient(req.body.panier, req.body.produit);
+            res.status(201).json(contient);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -32,9 +32,9 @@ export class ConfectionneController {
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
             const mongooseService = await MongooseService.getInstance();
-            const confectionneService = mongooseService.confectionneService;
-            const confectionnes = await confectionneService.getConfectionnes();
-            res.status(200).json(confectionnes);
+            const contientService = mongooseService.contientService;
+            const contients = await contientService.getContients();
+            res.status(200).json(contients);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -46,15 +46,15 @@ export class ConfectionneController {
                 res.status(400).json({ error: "Missing ID parameter" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const confectionneService = mongooseService.confectionneService;
-            const confectionne = await confectionneService.getConfectionneById(req.params.id);
-            if (!confectionne) {
+            const contientService = mongooseService.contientService;
+            const contient = await contientService.getContientById(req.params.id);
+            if (!contient) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
-            res.status(200).json(confectionne);
+            res.status(200).json(contient);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -66,15 +66,15 @@ export class ConfectionneController {
                 res.status(400).json({ error: "Missing required fields" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const confectionneService = mongooseService.confectionneService;
-            const updatedConfectionne = await confectionneService.updateConfectionne(req.params.id, req.body);
-            if (!updatedConfectionne) {
+            const contientService = mongooseService.contientService;
+            const updatedContient = await contientService.updateContient(req.params.id, req.body);
+            if (!updatedContient) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
-            res.status(200).json(updatedConfectionne);
+            res.status(200).json(updatedContient);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -86,11 +86,11 @@ export class ConfectionneController {
                 res.status(400).json({ error: "Missing ID parameter" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const confectionneService = mongooseService.confectionneService;
-            const deletedConfectionne = await confectionneService.deleteConfectionne(req.params.id);
-            if (!deletedConfectionne) {
+            const contientService = mongooseService.contientService;
+            const deletedContient = await contientService.deleteContient(req.params.id);
+            if (!deletedContient) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
@@ -102,24 +102,24 @@ export class ConfectionneController {
 
     buildRouter(): express.Router {
         const router = express.Router();
-        router.get("/confectionnes", express.json(), this.getAll.bind(this));
-        router.get("/confectionnes/:id", express.json(), this.getById.bind(this));
+        router.get("/contients", express.json(), this.getAll.bind(this));
+        router.get("/contients/:id", express.json(), this.getById.bind(this));
         router.post(
-            "/confectionnes",
+            "/contients",
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
             this.create.bind(this)
         );
         router.put(
-            "/confectionnes/:id",
+            "/contients/:id",
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
             this.update.bind(this)
         );
         router.delete(
-            "/confectionnes/:id",
+            "/contients/:id",
             // sessionMiddleware(),
             // roleMiddleware(IEmployeeRole.ADMIN),
             this.delete.bind(this)

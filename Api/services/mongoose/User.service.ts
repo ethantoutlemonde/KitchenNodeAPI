@@ -35,4 +35,9 @@ export class UserService {
     async deleteUser(id: string): Promise<IUser | null> {
         return await this.model.findByIdAndDelete(id).exec();
     }
+
+    async findUserByLogin(login: string): Promise<IUser | null> {
+        return await this.model.findOne({ login }).exec();
+    }
+    
 }

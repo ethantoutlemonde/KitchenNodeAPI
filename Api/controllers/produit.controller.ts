@@ -1,27 +1,27 @@
 import express from "express";
 import { MongooseService } from "../services";
 
-export class PanierMenuController {
-    private static instance?: PanierMenuController;
+export class ProduitController {
+    private static instance?: ProduitController;
 
-    static getInstance(): PanierMenuController {
-        if (!PanierMenuController.instance) {
-            PanierMenuController.instance = new PanierMenuController();
+    static getInstance(): ProduitController {
+        if (!ProduitController.instance) {
+            ProduitController.instance = new ProduitController();
         }
-        return PanierMenuController.instance;
+        return ProduitController.instance;
     }
 
     async create(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.panier || !req.body.menu) {
+            if (!req.body || !req.body.nom || !req.body.prix) {
                 res.status(400).json({ error: "Missing required fields" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const panierMenuService = mongooseService.panierMenuService;
-            const panierMenu = await panierMenuService.createPanierMenu(req.body.panier, req.body.menu);
-            res.status(201).json(panierMenu);
+            const produitService = mongooseService.produitService;
+            const produit = await produitService.createProduit(req.body.nom, req.body.prix);
+            res.status(201).json(produit);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -30,9 +30,9 @@ export class PanierMenuController {
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
             const mongooseService = await MongooseService.getInstance();
-            const panierMenuService = mongooseService.panierMenuService;
-            const panierMenus = await panierMenuService.getPanierMenus();
-            res.status(200).json(panierMenus);
+            const produitService = mongooseService.produitService;
+            const produits = await produitService.getProduits();
+            res.status(200).json(produits);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -44,15 +44,15 @@ export class PanierMenuController {
                 res.status(400).json({ error: "Missing ID parameter" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const panierMenuService = mongooseService.panierMenuService;
-            const panierMenu = await panierMenuService.getPanierMenuById(req.params.id);
-            if (!panierMenu) {
+            const produitService = mongooseService.produitService;
+            const produit = await produitService.getProduitById(req.params.id);
+            if (!produit) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
-            res.status(200).json(panierMenu);
+            res.status(200).json(produit);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -64,15 +64,15 @@ export class PanierMenuController {
                 res.status(400).json({ error: "Missing required fields" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const panierMenuService = mongooseService.panierMenuService;
-            const updatedPanierMenu = await panierMenuService.updatePanierMenu(req.params.id, req.body);
-            if (!updatedPanierMenu) {
+            const produitService = mongooseService.produitService;
+            const updatedProduit = await produitService.updateProduit(req.params.id, req.body);
+            if (!updatedProduit) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
-            res.status(200).json(updatedPanierMenu);
+            res.status(200).json(updatedProduit);
         } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
@@ -84,11 +84,11 @@ export class PanierMenuController {
                 res.status(400).json({ error: "Missing ID parameter" });
                 return;
             }
-            
+
             const mongooseService = await MongooseService.getInstance();
-            const panierMenuService = mongooseService.panierMenuService;
-            const deletedPanierMenu = await panierMenuService.deletePanierMenu(req.params.id);
-            if (!deletedPanierMenu) {
+            const produitService = mongooseService.produitService;
+            const deletedProduit = await produitService.deleteProduit(req.params.id);
+            if (!deletedProduit) {
                 res.status(404).json({ error: "Not found" });
                 return;
             }
@@ -100,11 +100,11 @@ export class PanierMenuController {
 
     buildRouter(): express.Router {
         const router = express.Router();
-        router.get("/paniermenus", express.json(), this.getAll.bind(this));
-        router.get("/paniermenus/:id", express.json(), this.getById.bind(this));
-        router.post("/paniermenus", express.json(), this.create.bind(this));
-        router.put("/paniermenus/:id", express.json(), this.update.bind(this));
-        router.delete("/paniermenus/:id", this.delete.bind(this));
+        router.get("/produits", express.json(), this.getAll.bind(this));
+        router.get("/produits/:id", express.json(), this.getById.bind(this));
+        router.post("/produits", express.json(), this.create.bind(this));
+        router.put("/produits/:id", express.json(), this.update.bind(this));
+        router.delete("/produits/:id", this.delete.bind(this));
         return router;
     }
 }
