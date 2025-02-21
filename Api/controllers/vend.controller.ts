@@ -11,26 +11,32 @@ export class VendController {
         return VendController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createVendre(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.nom || !req.body.prix || req.body.quantite === undefined) {
-                res.status(400).json({ error: "Missing required fields: nom, prix, quantite" });
+            const { restaurant, produit } = req.body;
+    
+            if (!restaurant || !produit) {
+                res.status(400).json({ error: "Missing required fields: restaurant or produit" });
                 return;
             }
-
+    
+            // Créer une nouvelle vente avec les données
             const mongooseService = await MongooseService.getInstance();
-            const vendService = mongooseService.vendreService;
-            const vend = await vendService.createVendre(req.body.nom, req.body.prix, req.body.quantite);
+            const vendService = mongooseService.vendService;
+            const vend = await vendService.createVendre(restaurant, produit);
+    
             res.status(201).json(vend);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour le débogage
+            res.status(400).json({ error: "Failed to create vend" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
             const mongooseService = await MongooseService.getInstance();
-            const vendService = mongooseService.vendreService;
+            const vendService = mongooseService.vendService;
             const vends = await vendService.getVentes();
             res.status(200).json(vends);
         } catch (error) {
@@ -46,7 +52,7 @@ export class VendController {
             }
 
             const mongooseService = await MongooseService.getInstance();
-            const vendService = mongooseService.vendreService;
+            const vendService = mongooseService.vendService;
             const vend = await vendService.getVendreById(req.params.id);
             if (!vend) {
                 res.status(404).json({ error: "Not found" });
@@ -66,7 +72,7 @@ export class VendController {
             }
 
             const mongooseService = await MongooseService.getInstance();
-            const vendService = mongooseService.vendreService;
+            const vendService = mongooseService.vendService;
             const updatedVend = await vendService.updateVendre(req.params.id, req.body);
             if (!updatedVend) {
                 res.status(404).json({ error: "Not found" });
@@ -86,7 +92,7 @@ export class VendController {
             }
 
             const mongooseService = await MongooseService.getInstance();
-            const vendService = mongooseService.vendreService;
+            const vendService = mongooseService.vendService;
             const deletedVend = await vendService.deleteVendre(req.params.id);
             if (!deletedVend) {
                 res.status(404).json({ error: "Not found" });
@@ -102,7 +108,7 @@ export class VendController {
         const router = express.Router();
         router.get("/vends", express.json(), this.getAll.bind(this));
         router.get("/vends/:id", express.json(), this.getById.bind(this));
-        router.post("/vends", express.json(), this.create.bind(this));
+        router.post("/vends", express.json(), this.createVendre.bind(this));
         router.put("/vends/:id", express.json(), this.update.bind(this));
         router.delete("/vends/:id", this.delete.bind(this));
         return router;

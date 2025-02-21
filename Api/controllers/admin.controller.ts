@@ -18,10 +18,19 @@ export class AdminController {
             return;
         }
         
-        const mongooseService = await MongooseService.getInstance();
-        const adminService = mongooseService.adminService;
-        const admin = await adminService.createAdmin(req.body.user, req.body.restaurant);
-        res.status(201).json(admin);
+        try {
+            const mongooseService = await MongooseService.getInstance();
+            const adminService = mongooseService.adminService;
+    
+            // Créer un nouvel admin
+            const admin = await adminService.createAdmin(req.body.user, req.body.restaurant);
+            
+            // Répondre avec l'objet admin créé
+            res.status(201).json(admin);
+        } catch (error) {
+            console.error("Error creating admin:", error);
+            res.status(500).json({ message: "Error creating admin" });
+        }
     }
 
     async getAdmins(req: express.Request, res: express.Response): Promise<void> {

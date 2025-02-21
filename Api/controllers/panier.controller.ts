@@ -13,21 +13,28 @@ export class PanierController {
         return PanierController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPanier(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.items) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { user } = req.body;
+    
+            if (!user) {
+                res.status(400).json({ error: "Missing required field: user" });
                 return;
             }
-            
+    
+            // Création du panier via le service
             const mongooseService = await MongooseService.getInstance();
             const panierService = mongooseService.panierService;
-            const panier = await panierService.createPanier(req.body.user, req.body.items);
+            const panier = await panierService.createPanier(user);
+    
             res.status(201).json(panier);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create panier" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class PanierController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createPanier.bind(this)
         );
         router.put(
             "/paniers/:id",

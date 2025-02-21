@@ -11,8 +11,8 @@ export class ContientService {
     }
 
     // Créer un contient
-    async createContient(menu: string, ingredient: string): Promise<IContient> {
-        const contient = new this.model({ Menu: menu, Ingredient: ingredient });
+    async createContient(menu: string, ingredient: string, quantite: number): Promise<IContient> {
+        const contient = new this.model({ Menu: menu, Ingredient: ingredient , Quantite: quantite });
         return await contient.save();
     }
 

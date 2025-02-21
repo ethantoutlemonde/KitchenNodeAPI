@@ -11,8 +11,8 @@ export class IngredientService {
     }
 
     // Créer un ingrédient
-    async createIngredient(nom: string, prix: number): Promise<IIngredient> {
-        const ingredient = new this.model({ Nom: nom, Prix: prix });
+    async createIngredient(nom: string): Promise<IIngredient> {
+        const ingredient = new this.model({ Nom: nom});
         return await ingredient.save();
     }
 

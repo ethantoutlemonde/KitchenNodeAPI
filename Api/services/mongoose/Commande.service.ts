@@ -11,8 +11,8 @@ export class CommandeService {
     }
 
     // Créer une commande
-    async createCommande(user: string, restaurant: string, items: string[]): Promise<ICommande> {
-        const commande = new this.model({ User: user, Restaurant: restaurant, Items: items });
+    async createCommande(user: string, panier: string[], status: string, latitude: number, longitude: number, adresseId: string): Promise<ICommande> {
+        const commande = new this.model({ User: user, Panier: panier, Status: status, Latitude: latitude, Longitude: longitude, AdresseId: adresseId });
         return await commande.save();
     }
 

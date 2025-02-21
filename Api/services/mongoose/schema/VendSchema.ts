@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import { IVend } from "../../../models";
 
-export const vendSchema = new Schema<IVend>({
+export const vendreSchema = new Schema<IVend>({
     Restaurant: {
         type: Schema.Types.ObjectId,
         ref: 'Restaurant',

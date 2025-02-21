@@ -13,21 +13,28 @@ export class PanierproduitController {
         return PanierproduitController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createPanierProduit(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.panier || !req.body.produit) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { produit, panier } = req.body;
+    
+            if (!produit || !panier) {
+                res.status(400).json({ error: "Missing required fields: produit, panier" });
                 return;
             }
-            
+    
+            // Création de l'association entre un produit et un panier via le service
             const mongooseService = await MongooseService.getInstance();
-            const panierproduitService = mongooseService.panierProduitService;
-            const panierproduit = await panierproduitService.createPanierProduit(req.body.panier, req.body.produit);
-            res.status(201).json(panierproduit);
+            const panierProduitService = mongooseService.panierProduitService;
+            const panierProduit = await panierProduitService.createPanierProduit(produit, panier);
+    
+            res.status(201).json(panierProduit);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create panierProduit" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -109,7 +116,7 @@ export class PanierproduitController {
             // sessionMiddleware(),
             express.json(),
             // roleMiddleware(IEmployeeRole.ADMIN),
-            this.create.bind(this)
+            this.createPanierProduit.bind(this)
         );
         router.put(
             "/paniersproduits/:id",

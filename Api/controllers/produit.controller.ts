@@ -11,21 +11,28 @@ export class ProduitController {
         return ProduitController.instance;
     }
 
-    async create(req: express.Request, res: express.Response): Promise<void> {
+    async createProduit(req: express.Request, res: express.Response): Promise<void> {
         try {
-            if (!req.body || !req.body.nom || !req.body.prix) {
-                res.status(400).json({ error: "Missing required fields" });
+            // Vérification des champs requis
+            const { nom, description, prix, image, disponible } = req.body;
+    
+            if (!nom || !description || !prix || !image || disponible === undefined) {
+                res.status(400).json({ error: "Missing required fields: nom, description, prix, image, disponible" });
                 return;
             }
-
+    
+            // Création d'un produit via le service
             const mongooseService = await MongooseService.getInstance();
             const produitService = mongooseService.produitService;
-            const produit = await produitService.createProduit(req.body.nom, req.body.prix);
+            const produit = await produitService.createProduit(nom, description, prix, image, disponible);
+    
             res.status(201).json(produit);
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            console.error(error); // Pour aider au débogage
+            res.status(400).json({ error: "Failed to create product" });
         }
     }
+    
 
     async getAll(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -102,7 +109,7 @@ export class ProduitController {
         const router = express.Router();
         router.get("/produits", express.json(), this.getAll.bind(this));
         router.get("/produits/:id", express.json(), this.getById.bind(this));
-        router.post("/produits", express.json(), this.create.bind(this));
+        router.post("/produits", express.json(), this.createProduit.bind(this));
         router.put("/produits/:id", express.json(), this.update.bind(this));
         router.delete("/produits/:id", this.delete.bind(this));
         return router;
